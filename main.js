@@ -21,7 +21,7 @@ function deleteQuery(connection, tableName, callback, whereParameters) {
                 throw err;
           });
         }
-    })
+    )
 }
 
 function insertQuery(connection, tableName, callback, valueParameters, colParameters) {
@@ -57,9 +57,9 @@ function updateQuery(connection, tableName, callback, valueParameters, wherePara
 }
 
 var myconnection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  database : 'tut'
+    host     : 'localhost',
+    user     : 'root',
+    database : 'tut'
 });
 
 myconnection.connect(function(err) {
@@ -82,4 +82,4 @@ var myCallback = function(err, rows, fields) {
 selectQuery(myconnection, 'mytable', myCallback,'*',"exam='csf213'");
 //deleteQuery(myconnection, 'mytable', function(){}, "exam='csf213'")
 //insertQuery(myconnection, 'mytable', function(){}, '359,"bitsat2"');
-updateQuery(myconnection, 'mytable', function(){}, 'marks = 150', )
+updateQuery(myconnection, 'mytable', function(){}, 'marks = 150', 'exam="csf215"');
