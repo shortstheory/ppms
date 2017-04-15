@@ -5,7 +5,9 @@
   "main": "main.js",
   "dependencies": {
     "express": "^4.10.6",
-    "mysql": "^2.5.4"
+    "mysql": "^2.5.4",
+    "query.js": "*",
+    "body-parser": "*"
   },
   "author": "arnav dhamija",
   "license": "ISC"
