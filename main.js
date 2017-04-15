@@ -3,6 +3,7 @@ var mysql = require('mysql');
 var query = require('./query.js')
 var express = require('express')
 var json2html = require('node-json2html')
+var fs = require('fs')
 app = express();
 
 var myconnection = mysql.createConnection({
@@ -41,11 +42,15 @@ var myCallback = function(err, rows, fields) {
 }
 //)
 
-
-query.selectQuery(myconnection, 'mytable', myCallback,['*']);
-
-http.createServer(function(req,res){});
-app.listen(8081, function(){
-    console.log('on8081');
+fs.readFile("./my.html", function(err, data){
+    http.createServer(function(request, response) {
+        //console.log(data);
+        response.writeHead(200, {'Content-Type': 'text/html'});
+        response.write(data);
+        response.end();
+    }).listen(8081, function(){
+        console.log('on8081');
+    });
 });
+//query.selectQuery(myconnection, 'mytable', myCallback,['*']);
 console.log('Server running at http://127.0.0.1:8081/');
