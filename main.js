@@ -5,6 +5,7 @@ var express = require('express')
 var json2html = require('node-json2html')
 var fs = require('fs')
 var path = require('path')
+var sqlquery = require('./sqlquery.js')
 
 app = express();
 
@@ -84,7 +85,8 @@ var resultCallback = function(rows, res) {
 
 app.get('/result', function(req, res) { //include page from which request is coming in GET
     //console.log(req.param.exam);
-    query.selectQuery(myconnection, 'mytable', resultCallback, res, ['*'], ['exam= \'' + req.query.exam + '\'']);
+    //query.selectQuery(myconnection, 'mytable', resultCallback, res, ['*'], ['exam= \'' + req.query.exam + '\'']);
+    sqlquery.runQuery('select * from exam', resultCallback, res);
 });
 
 app.get('/about',function(req,res){
