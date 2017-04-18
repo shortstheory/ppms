@@ -44,6 +44,19 @@ var resultCallback = function(rows, res) {
 
 app.use(express.static(__dirname + '/PPMS_GUI'));
 
+app.get('/vaccineResult', function(req, res)
+{
+    sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + req.query.searchVaccine + '%"' ,resultCallback, res);
+});
+
+app.get('patientResult', function(req, res)
+{
+  var type = res.query.type;
+  if(type == 'name')
+    sqlquery.runQuery(myconnection, 'SELECT * FROM PATIENT WHERE NAME LIKE "%' + res.query.name + '%";', resultCallback, res);
+});
+
+
 app.get('/result', function(req, res) { //include page from which request is coming in GET
     sqlquery.runQuery(myconnection, 'select * from mytable where exam=\'' + req.query.exam +'\'', resultCallback, res);
 });
