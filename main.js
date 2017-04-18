@@ -1,11 +1,13 @@
+var query = require('./query.js')
+var sqlquery = require('./sqlquery.js')
+
 var http = require('http');
 var mysql = require('mysql');
-var sqlquery = require('./sqlquery.js')
-var query = require('./query.js')
 var express = require('express')
 var json2html = require('node-json2html')
 var fs = require('fs')
 var path = require('path')
+var tableify = require('tableify');
 
 app = express();
 
@@ -26,7 +28,10 @@ myconnection.connect(function(err) {
 
 var resultCallback = function(rows, res) {
     console.log(rows);
-    var transform = {
+    var html = tableify(rows);
+    console.log(html);
+    res.send(html);
+/*    var transform = {
         tag: 'tr',
         children: [{
                 'tag': 'td',
@@ -39,7 +44,7 @@ var resultCallback = function(rows, res) {
     var html = json2html.transform(rows, transform);
     var tableHeader = '<tr><td>exam</td><td>marks</td></tr>'
     html = '<table id = "markstable">' + tableHeader + html + '</table>'
-    res.send(html);
+    res.send(html);*/
 }
 
 app.use(express.static(__dirname + '/PPMS_GUI'));
