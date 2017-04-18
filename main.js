@@ -54,12 +54,22 @@ app.get('/vaccineResult', function(req, res)
     sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + req.query.searchVaccine + '%"' ,resultCallback, res);
 });
 
-app.get('patientResult', function(req, res)
+app.get('/patientResult', function(req, res)
 {
-  var type = res.query.type;
-  if(type == 'name')
-    sqlquery.runQuery(myconnection, 'SELECT * FROM PATIENT WHERE NAME LIKE "%' + res.query.name + '%";', resultCallback, res);
+    var type = res.query.type;
+    if(type == 'name')
+        sqlquery.runQuery(myconnection, 'SELECT * FROM PATIENT WHERE NAME LIKE "%' + res.query.pname + '%"', resultCallback, res);
+    else if(type == 'mobile')
+        sqlquery.runQuery(myconnection,'SELECT * FROM PATIENT WHERE MOBILE=' + req.query.mobileNo, resultCallback, res);
+    else if(type == 'date')
+        sqlquery.runQuery(myconnection,'SELECT * FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE=' + req.query.dateOfPreviousVisit, resultCallback, res);
 });
+
+app.get('/vaccine_addVaccine.html', function(req, res)
+{
+    sqlquery.runCommitQuery(myconnection,'INSERT INTO VACCINE (NAME, PRICE) VALUES(' + req.query.vaccineName +', ' + req.query.vaccinePrice + ')' ,resultCallback, res);
+});
+
 
 
 app.get('/result', function(req, res) { //include page from which request is coming in GET
