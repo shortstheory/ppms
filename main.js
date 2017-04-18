@@ -1,11 +1,11 @@
 var http = require('http');
 var mysql = require('mysql');
+var sqlquery = require('./sqlquery.js')
 var query = require('./query.js')
 var express = require('express')
 var json2html = require('node-json2html')
 var fs = require('fs')
 var path = require('path')
-var sqlquery = require('./sqlquery.js')
 
 app = express();
 
@@ -23,47 +23,6 @@ myconnection.connect(function(err) {
         console.log('Connected to database.');
     }
 });
-
-var myCallback = function(err, rows, fields) {
-    app.get('/', function(req, res) {
-        console.log(html);
-        var transform = {
-            tag: 'tr',
-            children: [{
-                'tag': 'td',
-                'html': '${exam}'
-            }, {
-                'tag': 'td',
-                'html': '${marks}'
-            }]
-        };
-        var html = json2html.transform(rows, transform);
-        var tableHeader = '<tr><td>exam</td><td>marks</td></tr>'
-        html = '<table id = "markstable">' + tableHeader + html + '</table>'
-        res.send(html);
-    })
-}
-//)
-/*
-var resultCallback = function(err, rows, fields) {
-    app.get('/result', function(req,res) {
-        var transform = {
-            tag: 'tr',
-            children: [{
-                    'tag': 'td',
-                    'html': '${exam}'
-                }, {
-                    'tag': 'td',
-                    'html': '${marks}'
-            }]
-        };
-        var html = json2html.transform(rows, transform);
-        var tableHeader = '<tr><td>exam</td><td>marks</td></tr>'
-        html = '<table id = "markstable">' + tableHeader + html + '</table>'
-        res.send(html);
-    });
-}
-*/
 
 var resultCallback = function(rows, res) {
     console.log(rows);
@@ -83,10 +42,10 @@ var resultCallback = function(rows, res) {
     res.send(html);
 }
 
+app.use(express.static(__dirname + '/PPMS_GUI'));
+
 app.get('/result', function(req, res) { //include page from which request is coming in GET
-    //console.log(req.param.exam);
-    //query.selectQuery(myconnection, 'mytable', resultCallback, res, ['*'], ['exam= \'' + req.query.exam + '\'']);
-    sqlquery.runQuery('select * from exam', resultCallback, res);
+    sqlquery.runQuery(myconnection, 'select * from mytable where exam=\'' + req.query.exam +'\'', resultCallback, res);
 });
 
 app.get('/about',function(req,res){
@@ -95,6 +54,10 @@ app.get('/about',function(req,res){
 
 app.get('/', function(req, res) {
     query.selectQuery(myconnection, 'mytable', resultCallback, res);
+});
+
+app.get('/index', function(req, res) {
+    res.sendFile(path.join(__dirname+'/PPMS_GUI/index.html'))
 })
 
 http.createServer(function(req, res){
