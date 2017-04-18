@@ -1,14 +1,21 @@
 var mysql = require('mysql');
 
 var query = module.exports = {
-    selectQuery: function(connection, tableName, callback, selectParameters, whereParameters) {
+    selectQuery: function(connection, tableName, callback, res, selectParameters, whereParameters) {
         selectParameters = typeof selectParameters !== 'undefined' ? selectParameters : ['*'];
         selectParameters = selectParameters.join();
         if (typeof whereParameters == 'undefined') {
-            connection.query('select ' + selectParameters + ' from ' + tableName, callback);
+            connection.query('select ' + selectParameters + ' from ' + tableName,
+                        function(err, rows, fields) {
+                            callback(rows, res);
+            });
         } else {
-            whereParameters = whereParameters.join();
-            connection.query('select ' + selectParameters + ' from ' + tableName + ' where ' + whereParameters, callback);
+            whereParameters = whereParameters.join(' and ');
+            console.log(whereParameters);
+            connection.query('select ' + selectParameters + ' from ' + tableName +
+                            ' where ' + whereParameters, function(err, rows, fields) {
+                callback(rows, res);
+            });
         }
     },
     deleteQuery: function(connection, tableName, callback, whereParameters) {
