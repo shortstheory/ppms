@@ -5,6 +5,6 @@ var sqlquery = module.exports = {
         connection.query(queryString, function(err, rows, fields) {
                 console.log(queryString);
                 callback(rows, res);
-            }
+        }
     )}
 };
