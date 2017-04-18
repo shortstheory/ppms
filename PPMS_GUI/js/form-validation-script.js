@@ -1,9 +1,5 @@
 var Script = function () {
 
-    $.validator.setDefaults({
-        submitHandler: function() { alert("submitted!"); }
-    });
-
     $().ready(function() {
         // validate the comment form when it is submitted
         $("#feedback_form").validate();
@@ -42,7 +38,7 @@ var Script = function () {
                 },
                 agree: "required"
             },
-            messages: {                
+            messages: {
                 fullname: {
                     required: "Please enter a Full Name.",
                     minlength: "Your Full Name must consist of at least 6 characters long."
