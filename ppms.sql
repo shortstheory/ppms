@@ -167,7 +167,7 @@ DROP TABLE IF EXISTS `VACCINE`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `VACCINE` (
-  `ID` int(11) NOT NULL,
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `NAME` varchar(25) NOT NULL,
   `PRICE` int(11) NOT NULL,
   `STOCK` int(11) DEFAULT NULL,
