@@ -18,6 +18,9 @@
 -- Edit Patient:
 'UPDATE TABLE PATIENT SET NAME = '+ name + ', DOB = ' + dob + ', MOBILE = ' + mob + ', ADDRESS = ' + address + ' WHERE ID = '+ id +';'
 
+-- Delete Patient
+'DELETE FROM PATIENT WHERE ID = '+ id +';'
+
 -- Add visit record:
 'INSERT INTO P_VISITS_D (PID, VID, VISIT_DATE, DIAGNOSIS, TREATMENT) VALUES ('+pid+', '+did+', DATE(SYSDATE()), '+diagnosis+', '+treatment+');'
 -- if vaccine was taken, also execute:
