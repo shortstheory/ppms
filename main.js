@@ -15,13 +15,12 @@ app = express();
 var myconnection = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
-    database : 'ppms'
+    database : 'tut'
 });
 
 myconnection.connect(function(err) {
     if (err) {
         console.error('Error connecting: ' + err.stack);
-        return;
     } else {
         console.log('Connected to database.');
     }
@@ -41,7 +40,7 @@ function vaccineTableTransform(rows) {
             'html': '${STOCK}'
         },{
             'tag': 'td',
-            'html': '${NAME}'
+            'html': '<div class="btn-group"><a class="btn btn-danger" href="vaccineResult?deleteValue=${NAME}"><i class="icon_close_alt2"></i></a></div>'
         }]
     };
     var html = json2html.transform(rows, transform);
@@ -127,6 +126,7 @@ var resultCallback = function(rows, res) {
 var insertCallback = function(rows, res){
     if (typeof rows == 'undefined') {
         res.send('Nothing to display');
+        return;
     }
     var alertScript = '<script type = text/javascript>alert("Done");</script>';
     res.sendFile(path.join(__dirname+'/PPMS_GUI/index.html'))
@@ -172,8 +172,15 @@ app.get('/', function(req, res) {
     query.selectQuery(myconnection, 'mytable', resultCallback, res);
 });
 
+var lastVaccineQuery;
 app.get('/vaccineResult', function(req, res) {
-    sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + req.query.searchVaccine + '%"', vaccineResultCallback, res);
+    if (typeof req.query.searchVaccine !== 'undefined') {
+        lastVaccineQuery = req.query.searchVaccine;
+        sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + req.query.searchVaccine + '%"', vaccineResultCallback, res);
+    } else if (typeof req.query.deleteValue !== 'undefined') {
+        sqlquery.runCommitQuery(myconnection, 'DELETE FROM VACCINE WHERE NAME="' + req.query.deleteValue + '"', function(rows, res){}, res);
+        sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + lastVaccineQuery + '%"', vaccineResultCallback, res);
+    }
 });
 
 http.createServer(function(req, res){
