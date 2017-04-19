@@ -14,7 +14,7 @@ app = express();
 var myconnection = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
-    database : 'tut'
+    database : 'ppms'
 });
 
 myconnection.connect(function(err) {
@@ -48,6 +48,29 @@ var resultCallback = function(rows, res) {
 }
 
 app.use(express.static(__dirname + '/PPMS_GUI'));
+
+app.get('/vaccineResult', function(req, res) {
+    sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + req.query.searchVaccine + '%"' ,resultCallback, res);
+});
+
+app.get('/patientResult', function(req, res) {
+    var type = res.query.type;
+    if(type == 'name')
+        sqlquery.runQuery(myconnection, 'SELECT * FROM PATIENT WHERE NAME LIKE "%' + res.query.pname + '%"', resultCallback, res);
+    else if(type == 'mobile')
+        sqlquery.runQuery(myconnection,'SELECT * FROM PATIENT WHERE MOBILE=' + req.query.mobileNo, resultCallback, res);
+    else if(type == 'date')
+        sqlquery.runQuery(myconnection,'SELECT * FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE=' + req.query.dateOfPreviousVisit, resultCallback, res);
+});
+
+app.get('/vaccine_addVaccine.html', function(req, res) {
+    sqlquery.runCommitQuery(myconnection,'INSERT INTO VACCINE (NAME, PRICE) VALUES(' + req.query.vaccineName +', ' + req.query.vaccinePrice + ')' ,resultCallback, res);
+});
+
+app.get('/patient_newPatientRecord.html', function(req, res) {
+    sqlquery.runCommitQuery(myconnection,'INSERT INTO PATIENT (NAME, DOB, MOBILE, ADDRESS) VALUES(' + req.query.patientName + ', ' + req.query.dateOfBirth + ', ' + req.query.mobileNo + ', ' + req.query.address + ');' , resultCallback, res);
+});
+
 
 app.get('/result', function(req, res) { //include page from which request is coming in GET
     sqlquery.runQuery(myconnection, 'select * from mytable where exam=\'' + req.query.exam +'\'', resultCallback, res);
