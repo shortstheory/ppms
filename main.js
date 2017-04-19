@@ -8,13 +8,14 @@ var json2html = require('node-json2html')
 var fs = require('fs')
 var path = require('path')
 var tableify = require('tableify');
+var jsdom = require('jsdom');
 
 app = express();
 
 var myconnection = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
-    database : 'ppms'
+    database : 'tut'
 });
 
 myconnection.connect(function(err) {
@@ -48,11 +49,11 @@ var resultCallback = function(rows, res) {
 }
 
 app.use(express.static(__dirname + '/PPMS_GUI'));
-
+/*
 app.get('/vaccineResult', function(req, res) {
     sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + req.query.searchVaccine + '%"' ,resultCallback, res);
 });
-
+*/
 app.get('/patientResult', function(req, res) {
     var type = res.query.type;
     if(type == 'name')
@@ -85,7 +86,30 @@ app.get('/', function(req, res) {
 });
 
 app.get('/index', function(req, res) {
-    res.sendFile(path.join(__dirname+'/PPMS_GUI/index.html'))
+    res.sendFile(path.join(__dirname+'/PPMS_GUI/index.html'));
+});
+
+var vaccineResultCallback = function(rows, res) {
+    var tableHtml = tableify(rows);
+    console.log(tableHtml);
+    fs.readFile(path.join(__dirname+'/PPMS_GUI/vaccine_result.html'), 'utf-8', function(err, html) {
+        jsdom.env(html,null, function(err, window) {
+            var $ = require('jquery')(window);
+            $("#vaccineTable").html(tableHtml);
+            res.send('<html>'+$("html").html()+'</html>');
+        });
+    });
+}
+
+app.get('/vaccineResult', function(req, res) {
+    sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + req.query.searchVaccine + '%"', resultCallback, res);
+    fs.readFile(path.join(__dirname+'/PPMS_GUI/vaccine_result.html'), 'utf-8', function(err, html) {
+        jsdom.env(html,null, function(err, window) {
+            var $ = require('jquery')(window);
+            $("#vaccineTable").html("<tr><td>MyTable</td></tr>");
+            res.send('<html>'+$("html").html()+'</html>');
+        });
+    });
 });
 
 http.createServer(function(req, res){
@@ -93,6 +117,17 @@ http.createServer(function(req, res){
 
 app.listen(8081, function() {
     console.log('on8081');
+});
+
+var html = fs.readFileSync(path.join(__dirname+'/PPMS_GUI/vaccine_result.html'), 'utf-8');
+
+jsdom.env(html,null, function(err, window) {
+    var $ = require('jquery')(window);
+    $("#vaccineTable").html("<tr><td>MyTable</td></tr>");
+    app.get('/mypage', function(req, res) {
+        res.send('<html>'+$("html").html()+'</html>');
+    });
+    console.log('<html>'+$("html").html()+'</html>');
 });
 
 console.log('Server running at http://127.0.0.1:8081/');

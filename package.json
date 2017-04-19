@@ -9,7 +9,8 @@
     "query.js": "*",
     "body-parser": "*",
     "tableify": "*",
-    "jsdom": "*"
+    "jsdom": "*",
+    "jquery": "*"
   },
   "author": "arnav dhamija",
   "license": "ISC"
