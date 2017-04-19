@@ -15,7 +15,7 @@ app = express();
 var myconnection = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
-    database : 'tut'
+    database : 'ppms'
 });
 
 myconnection.connect(function(err) {
@@ -50,7 +50,7 @@ function vaccineTableTransform(rows) {
     return html;
 }
 
-function vaccineTableTransform(rows) {
+function patientTableTransform(rows) {
     var transform = {
         tag: 'tr',
         children: [{
@@ -134,7 +134,7 @@ var insertCallback = function(rows, res){
 
 app.use(express.static(__dirname + '/PPMS_GUI'));
 
-app.get('/index' ,function(req, res){
+app.get('/index', function(req, res){
     console.log('Fetching today\'s patients');
     sqlquery.runQuery(myconnection,'SELECT P.NAME, P.MOBILE, P.ADDRESS FROM PATIENT P, P_VISITS_D PD WHERE P.ID = PD.PID AND PD.VISIT_DATE=DATE(SYSDATE())' , resultCallback, res);
 });
