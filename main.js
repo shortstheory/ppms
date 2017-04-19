@@ -27,6 +27,11 @@ myconnection.connect(function(err) {
 });
 
 var resultCallback = function(rows, res) {
+    if (typeof rows == 'undefined')
+    {
+        res.send('Nothing to display');
+        return;
+    }
     console.log(rows);
     var html = tableify(rows);
     console.log(html);
@@ -45,7 +50,17 @@ var resultCallback = function(rows, res) {
     var tableHeader = '<tr><td>exam</td><td>marks</td></tr>'
     html = '<table id = "markstable">' + tableHeader + html + '</table>'
     res.send(html); */
-}
+};
+
+var insertCallback = function(rows, res){
+  if (typeof rows == 'undefined')
+  {
+      res.send('Nothing to display');
+  }
+  var alertScript = '<script type = text/javascript>alert("Done");</script>';
+  // res.send(alertScript);
+  res.sendFile(path.join(__dirname+'/PPMS_GUI/index.html'))
+};
 
 app.use(express.static(__dirname + '/PPMS_GUI'));
 
@@ -63,12 +78,12 @@ app.get('/patientResult', function(req, res) {
         sqlquery.runQuery(myconnection,'SELECT * FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE=' + req.query.dateOfPreviousVisit, resultCallback, res);
 });
 
-app.get('/vaccine_addVaccine.html', function(req, res) {
-    sqlquery.runCommitQuery(myconnection,'INSERT INTO VACCINE (NAME, PRICE) VALUES(' + req.query.vaccineName +', ' + req.query.vaccinePrice + ')' ,resultCallback, res);
+app.get('/vaccine_addVaccine', function(req, res) {
+    sqlquery.runCommitQuery(myconnection,'INSERT INTO VACCINE (NAME, PRICE) VALUES("' + req.query.vaccineName +'", ' + req.query.vaccinePrice + ')' ,insertCallback, res);
 });
 
-app.get('/patient_newPatientRecord.html', function(req, res) {
-    sqlquery.runCommitQuery(myconnection,'INSERT INTO PATIENT (NAME, DOB, MOBILE, ADDRESS) VALUES(' + req.query.patientName + ', ' + req.query.dateOfBirth + ', ' + req.query.mobileNo + ', ' + req.query.address + ')' , resultCallback, res);
+app.get('/patient_newPatientRecord', function(req, res) {
+    sqlquery.runCommitQuery(myconnection,'INSERT INTO PATIENT (NAME, DOB, MOBILE, ADDRESS) VALUES("' + req.query.patientName + '", "' + req.query.dateOfBirth + '", "' + req.query.mobileNo + '", "' + req.query.address + '")' , insertCallback, res);
 });
 
 
@@ -85,7 +100,7 @@ app.get('/', function(req, res) {
 });
 
 app.get('/index', function(req, res) {
-    res.sendFile(path.join(__dirname+'/PPMS_GUI/index.html'))
+    res.sendFile(path.join(__dirname+'/PPMS_GUI/index.html'));
 });
 
 http.createServer(function(req, res){
