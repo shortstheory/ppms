@@ -44,7 +44,7 @@ var resultCallback = function(rows, res) {
     var html = json2html.transform(rows, transform);
     var tableHeader = '<tr><td>exam</td><td>marks</td></tr>'
     html = '<table id = "markstable">' + tableHeader + html + '</table>'
-    res.send(html);*/
+    res.send(html); */
 }
 
 app.use(express.static(__dirname + '/PPMS_GUI'));
@@ -86,7 +86,7 @@ app.get('/', function(req, res) {
 
 app.get('/index', function(req, res) {
     res.sendFile(path.join(__dirname+'/PPMS_GUI/index.html'))
-})
+});
 
 http.createServer(function(req, res){
 });
