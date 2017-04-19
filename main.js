@@ -27,6 +27,29 @@ myconnection.connect(function(err) {
     }
 });
 
+function vaccineTableTransform(rows) {
+    var transform = {
+        tag: 'tr',
+        children: [{
+            'tag': 'td',
+            'html': '${NAME}'
+        },{
+            'tag': 'td',
+            'html': '${PRICE}'
+        },{
+            'tag': 'td',
+            'html': '${STOCK}'
+        },{
+            'tag': 'td',
+            'html': '${NAME}'
+        }]
+    };
+    var html = json2html.transform(rows, transform);
+    var tableHeader = '<tr><th>NAME</th><th>PRICE</th><th>STOCK</th><th>DELETE</th></tr>';
+    html = tableHeader + html;
+    return html;
+}
+
 var resultCallback = function(rows, res) {
     console.log(rows);
     var html = tableify(rows);
@@ -90,7 +113,7 @@ app.get('/index', function(req, res) {
 });
 
 var vaccineResultCallback = function(rows, res) {
-    var tableHtml = tableify(rows);
+    var tableHtml = vaccineTableTransform(rows);//tableify(rows);
     console.log(tableHtml);
     fs.readFile(path.join(__dirname+'/PPMS_GUI/vaccine_result.html'), 'utf-8', function(err, html) {
         jsdom.env(html,null, function(err, window) {
@@ -102,14 +125,7 @@ var vaccineResultCallback = function(rows, res) {
 }
 
 app.get('/vaccineResult', function(req, res) {
-    sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + req.query.searchVaccine + '%"', resultCallback, res);
-    fs.readFile(path.join(__dirname+'/PPMS_GUI/vaccine_result.html'), 'utf-8', function(err, html) {
-        jsdom.env(html,null, function(err, window) {
-            var $ = require('jquery')(window);
-            $("#vaccineTable").html("<tr><td>MyTable</td></tr>");
-            res.send('<html>'+$("html").html()+'</html>');
-        });
-    });
+    sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + req.query.searchVaccine + '%"', vaccineResultCallback, res);
 });
 
 http.createServer(function(req, res){
