@@ -54,9 +54,9 @@ app.get('/vaccineResult', function(req, res) {
 });
 
 app.get('/patientResult', function(req, res) {
-    var type = res.query.type;
+    var type = req.query.type;
     if(type == 'name')
-        sqlquery.runQuery(myconnection, 'SELECT * FROM PATIENT WHERE NAME LIKE "%' + res.query.pname + '%"', resultCallback, res);
+        sqlquery.runQuery(myconnection, 'SELECT * FROM PATIENT WHERE NAME LIKE "%' + req.query.pname + '%"', resultCallback, res);
     else if(type == 'mobile')
         sqlquery.runQuery(myconnection,'SELECT * FROM PATIENT WHERE MOBILE=' + req.query.mobileNo, resultCallback, res);
     else if(type == 'date')
@@ -68,7 +68,7 @@ app.get('/vaccine_addVaccine.html', function(req, res) {
 });
 
 app.get('/patient_newPatientRecord.html', function(req, res) {
-    sqlquery.runCommitQuery(myconnection,'INSERT INTO PATIENT (NAME, DOB, MOBILE, ADDRESS) VALUES(' + req.query.patientName + ', ' + req.query.dateOfBirth + ', ' + req.query.mobileNo + ', ' + req.query.address + ');' , resultCallback, res);
+    sqlquery.runCommitQuery(myconnection,'INSERT INTO PATIENT (NAME, DOB, MOBILE, ADDRESS) VALUES(' + req.query.patientName + ', ' + req.query.dateOfBirth + ', ' + req.query.mobileNo + ', ' + req.query.address + ')' , resultCallback, res);
 });
 
 
