@@ -64,6 +64,11 @@ var insertCallback = function(rows, res){
 
 app.use(express.static(__dirname + '/PPMS_GUI'));
 
+app.get('/index' ,function(req, res){
+    console.log('Fetching today\'s patients');
+    sqlquery.runQuery(myconnection,'SELECT P.NAME, P.MOBILE, P.ADDRESS FROM PATIENT P, P_VISITS_D PD WHERE P.ID = PD.PID AND PD.VISIT_DATE=DATE(SYSDATE())' , resultCallback, res);
+});
+
 app.get('/vaccineResult', function(req, res) {
     sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + req.query.searchVaccine + '%"' ,resultCallback, res);
 });
@@ -75,7 +80,10 @@ app.get('/patientResult', function(req, res) {
     else if(type == 'mobile')
         sqlquery.runQuery(myconnection,'SELECT * FROM PATIENT WHERE MOBILE=' + req.query.mobileNo, resultCallback, res);
     else if(type == 'date')
-        sqlquery.runQuery(myconnection,'SELECT * FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE=' + req.query.dateOfPreviousVisit, resultCallback, res);
+    {
+        var date = req.query.year+'-'+req.query.month+'-'+req.query.day;
+        sqlquery.runQuery(myconnection,'SELECT * FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE="' + date + '"', resultCallback, res);
+    }
 });
 
 app.get('/vaccine_addVaccine', function(req, res) {
