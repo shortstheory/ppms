@@ -51,6 +51,11 @@ function vaccineTableTransform(rows) {
 }
 
 var resultCallback = function(rows, res) {
+    if (typeof rows == 'undefined')
+    {
+        res.send('Nothing to display');
+        return;
+    }
     console.log(rows);
     var html = tableify(rows);
     console.log(html);
@@ -69,30 +74,48 @@ var resultCallback = function(rows, res) {
     var tableHeader = '<tr><td>exam</td><td>marks</td></tr>'
     html = '<table id = "markstable">' + tableHeader + html + '</table>'
     res.send(html); */
-}
+};
+
+var insertCallback = function(rows, res){
+  if (typeof rows == 'undefined')
+  {
+      res.send('Nothing to display');
+  }
+  var alertScript = '<script type = text/javascript>alert("Done");</script>';
+  // res.send(alertScript);
+  res.sendFile(path.join(__dirname+'/PPMS_GUI/index.html'))
+};
 
 app.use(express.static(__dirname + '/PPMS_GUI'));
-/*
+
+app.get('/index' ,function(req, res){
+    console.log('Fetching today\'s patients');
+    sqlquery.runQuery(myconnection,'SELECT P.NAME, P.MOBILE, P.ADDRESS FROM PATIENT P, P_VISITS_D PD WHERE P.ID = PD.PID AND PD.VISIT_DATE=DATE(SYSDATE())' , resultCallback, res);
+});
+
 app.get('/vaccineResult', function(req, res) {
     sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + req.query.searchVaccine + '%"' ,resultCallback, res);
 });
-*/
+
 app.get('/patientResult', function(req, res) {
-    var type = res.query.type;
+    var type = req.query.type;
     if(type == 'name')
-        sqlquery.runQuery(myconnection, 'SELECT * FROM PATIENT WHERE NAME LIKE "%' + res.query.pname + '%"', resultCallback, res);
+        sqlquery.runQuery(myconnection, 'SELECT * FROM PATIENT WHERE NAME LIKE "%' + req.query.pname + '%"', resultCallback, res);
     else if(type == 'mobile')
         sqlquery.runQuery(myconnection,'SELECT * FROM PATIENT WHERE MOBILE=' + req.query.mobileNo, resultCallback, res);
     else if(type == 'date')
-        sqlquery.runQuery(myconnection,'SELECT * FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE=' + req.query.dateOfPreviousVisit, resultCallback, res);
+    {
+        var date = req.query.year+'-'+req.query.month+'-'+req.query.day;
+        sqlquery.runQuery(myconnection,'SELECT * FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE="' + date + '"', resultCallback, res);
+    }
 });
 
-app.get('/vaccine_addVaccine.html', function(req, res) {
-    sqlquery.runCommitQuery(myconnection,'INSERT INTO VACCINE (NAME, PRICE) VALUES(' + req.query.vaccineName +', ' + req.query.vaccinePrice + ')' ,resultCallback, res);
+app.get('/vaccine_addVaccine', function(req, res) {
+    sqlquery.runCommitQuery(myconnection,'INSERT INTO VACCINE (NAME, PRICE) VALUES("' + req.query.vaccineName +'", ' + req.query.vaccinePrice + ')' ,insertCallback, res);
 });
 
-app.get('/patient_newPatientRecord.html', function(req, res) {
-    sqlquery.runCommitQuery(myconnection,'INSERT INTO PATIENT (NAME, DOB, MOBILE, ADDRESS) VALUES(' + req.query.patientName + ', ' + req.query.dateOfBirth + ', ' + req.query.mobileNo + ', ' + req.query.address + ');' , resultCallback, res);
+app.get('/patient_newPatientRecord', function(req, res) {
+    sqlquery.runCommitQuery(myconnection,'INSERT INTO PATIENT (NAME, DOB, MOBILE, ADDRESS) VALUES("' + req.query.patientName + '", "' + req.query.dateOfBirth + '", "' + req.query.mobileNo + '", "' + req.query.address + '")' , insertCallback, res);
 });
 
 
@@ -126,6 +149,8 @@ var vaccineResultCallback = function(rows, res) {
 
 app.get('/vaccineResult', function(req, res) {
     sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + req.query.searchVaccine + '%"', vaccineResultCallback, res);
+=======
+>>>>>>> 626ba3a29d98ae449f15ed92d888586a4448d663
 });
 
 http.createServer(function(req, res){
