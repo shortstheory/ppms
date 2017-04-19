@@ -10,7 +10,7 @@
 -- Patient search:
 'SELECT * FROM PATIENT WHERE NAME LIKE "%' + name + '%";'
 'SELECT * FROM PATIENT WHERE MOBILE=' + mob + ';'
-'SELECT * FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE BETWEEN ' + start_date + ' AND ' + end_date + ';'
+'SELECT * FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE=' + start_date + ';'
 
 -- New Patient:
 'INSERT INTO PATIENT (NAME, DOB, MOBILE, ADDRESS) VALUES(' + name + ', ' + dob + ', ' + mobile + ', ' + address + ');'
