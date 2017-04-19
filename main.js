@@ -141,8 +141,6 @@ var vaccineResultCallback = function(rows, res) {
 
 app.get('/vaccineResult', function(req, res) {
     sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + req.query.searchVaccine + '%"', vaccineResultCallback, res);
-=======
->>>>>>> 626ba3a29d98ae449f15ed92d888586a4448d663
 });
 
 http.createServer(function(req, res){
