@@ -93,10 +93,6 @@ app.get('/index' ,function(req, res){
     sqlquery.runQuery(myconnection,'SELECT P.NAME, P.MOBILE, P.ADDRESS FROM PATIENT P, P_VISITS_D PD WHERE P.ID = PD.PID AND PD.VISIT_DATE=DATE(SYSDATE())' , resultCallback, res);
 });
 
-app.get('/vaccineResult', function(req, res) {
-    sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + req.query.searchVaccine + '%"' ,resultCallback, res);
-});
-
 app.get('/patientResult', function(req, res) {
     var type = req.query.type;
     if(type == 'name')
@@ -129,10 +125,6 @@ app.get('/about',function(req,res){
 
 app.get('/', function(req, res) {
     query.selectQuery(myconnection, 'mytable', resultCallback, res);
-});
-
-app.get('/index', function(req, res) {
-    res.sendFile(path.join(__dirname+'/PPMS_GUI/index.html'));
 });
 
 var vaccineResultCallback = function(rows, res) {
