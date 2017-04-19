@@ -77,13 +77,11 @@ var resultCallback = function(rows, res) {
 };
 
 var insertCallback = function(rows, res){
-  if (typeof rows == 'undefined')
-  {
-      res.send('Nothing to display');
-  }
-  var alertScript = '<script type = text/javascript>alert("Done");</script>';
-  // res.send(alertScript);
-  res.sendFile(path.join(__dirname+'/PPMS_GUI/index.html'))
+    if (typeof rows == 'undefined') {
+        res.send('Nothing to display');
+    }
+    var alertScript = '<script type = text/javascript>alert("Done");</script>';
+    res.sendFile(path.join(__dirname+'/PPMS_GUI/index.html'))
 };
 
 app.use(express.static(__dirname + '/PPMS_GUI'));
@@ -129,7 +127,6 @@ app.get('/', function(req, res) {
 
 var vaccineResultCallback = function(rows, res) {
     var tableHtml = vaccineTableTransform(rows);//tableify(rows);
-    console.log(tableHtml);
     fs.readFile(path.join(__dirname+'/PPMS_GUI/vaccine_result.html'), 'utf-8', function(err, html) {
         jsdom.env(html,null, function(err, window) {
             var $ = require('jquery')(window);
@@ -151,14 +148,5 @@ app.listen(8081, function() {
 });
 
 var html = fs.readFileSync(path.join(__dirname+'/PPMS_GUI/vaccine_result.html'), 'utf-8');
-
-jsdom.env(html,null, function(err, window) {
-    var $ = require('jquery')(window);
-    $("#vaccineTable").html("<tr><td>MyTable</td></tr>");
-    app.get('/mypage', function(req, res) {
-        res.send('<html>'+$("html").html()+'</html>');
-    });
-    console.log('<html>'+$("html").html()+'</html>');
-});
 
 console.log('Server running at http://127.0.0.1:8081/');
