@@ -15,6 +15,7 @@ var sqlquery = module.exports = {
         connection.commit(function(err) {
             if (err)
                 return connection.rollback(function() {
+                    console.log(err);
                     throw err;
               });
           });

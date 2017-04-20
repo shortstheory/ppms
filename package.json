@@ -8,7 +8,9 @@
     "mysql": "^2.5.4",
     "query.js": "*",
     "body-parser": "*",
-    "tableify": "*"
+    "tableify": "*",
+    "jsdom": "*",
+    "jquery": "*"
   },
   "author": "arnav dhamija",
   "license": "ISC"
