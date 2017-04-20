@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Creative - Bootstrap 3 Responsive Admin Template">
+    <meta name="author" content="GeeksLabs">
+    <meta name="keyword" content="Creative, Dashboard, Admin, Template, Theme, Bootstrap, Responsive, Retina, Minimal">
+    <link rel="shortcut icon" href="img/favicon.png">
+
+    <title>PPMS</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- bootstrap theme -->
+    <link href="css/bootstrap-theme.css" rel="stylesheet">
+    <!--external css-->
+    <!-- font icon -->
+    <link href="css/elegant-icons-style.css" rel="stylesheet" />
+    <link href="css/font-awesome.min.css" rel="stylesheet" />
+    <!-- Custom styles -->
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/style-responsive.css" rel="stylesheet" />
+
+
+  </head>
+
+  <body>
+
+
+      <!-- container section start -->
+  <section id="container" class="">
+
+
+      <header class="header dark-bg">
+            <div class="toggle-nav">
+                <div class="icon-reorder tooltips" data-original-title="Toggle Navigation" data-placement="bottom"><i class="icon_menu"></i></div>
+            </div>
+
+            <!--logo start-->
+            <a href="index.html" class="logo">Paediatric Patient<span class="lite"> | MS</span></a>
+            <!--logo end-->
+
+
+      </header>
+      <!--header end-->
+
+      <!--sidebar start-->
+      <aside>
+          <div id="sidebar"  class="nav-collapse ">
+              <!-- sidebar menu start-->
+              <ul class="sidebar-menu">
+                  <li class="active">
+                      <a class="" href="index.html">
+                          <i class="icon_house_alt"></i>
+                          <span>Home</span>
+                      </a>
+                  </li>
+          <li class="sub-menu">
+                      <a href="javascript:;" class="">
+                          <i class="icon_document_alt"></i>
+                          <span>Patient</span>
+                          <span class="menu-arrow arrow_carrot-right"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="" href="patient_searchPatient.html">Search Records</a></li>
+                          <li><a class="" href="patient_newPatientRecord.html">New Patient</a></li>
+                      </ul>
+                  </li>
+
+                  
+                  <li class="sub-menu">
+                      <a href="javascript:;" class="">
+                          <i class="icon_documents_alt"></i>
+                          <span>Vaccine</span>
+                          <span class="menu-arrow arrow_carrot-right"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="" href="vaccine_searchVaccine.html">Search Vaccines</a></li>
+
+                          <li><a class="" href="vaccine_addVaccine.html">Add Vaccine</a></li>
+
+                      </ul>
+                  </li>
+
+              </ul>
+              <!-- sidebar menu end-->
+          </div>
+      </aside>
+      <!--sidebar end-->
+      <!--main content start-->
+      <section id="main-content">
+          <section class="wrapper">
+		  <div class="row">
+				<div class="col-lg-12">
+					<h3 class="page-header"><i class="fa fa-files-o"></i>Current Visit</h3>
+					<ol class="breadcrumb">
+						<li><i class="fa fa-home"></i><a href="index.html">Home</a></li>
+						<li><i class="icon_document_alt"></i>Patient</li>
+						<li><i class="fa fa-files-o"></i>Current Visit Details</li>
+					</ol>
+				</div>
+			</div>
+              <!-- Form validations -->
+              <div class="row">
+                  <div class="col-lg-12">
+                      <section class="panel">
+                          <header class="panel-heading">
+                              Current Visit Details
+                          </header>
+                          <div class="panel-body">
+                              <div class="form">
+                                  <form class="form-validate form-horizontal" id="feedback_form" method="get" action="/patient_newPatientRecord">
+                                      <div class="form-group ">
+                                          <label for="patientName" class="control-label col-lg-2">Patient Name <span class="required">*</span></label>
+                                          <div class="col-lg-2">
+                                              <input class="form-control" id="patientName" name="patientName" type="text" required />
+                                          </div>
+                                          <label for="dateOfBirth" class="control-label col-lg-2">Date of Birth <span class="required">*</span></label>
+                                          <div class="col-lg-2">
+                                              <input class="form-control " id="dateOfBirth" type="text" name="dateOfBirth" required />
+                                          </div>
+                                          <label for="mobileNo" class="control-label col-lg-2">Mobile No.<span class="required">*</span></label>
+                                          <div class="col-lg-2">
+                                              <input class="form-control " id="mobileNo" type="text" name="mobileNo" required/>
+                                          </div>
+                                      </div>
+                                      
+
+                                      <div class="form-group ">
+                                          <label for="diagnosis" class="control-label col-lg-2">Diagnosis</label>
+                                          <div class="col-lg-10">
+                                              <textarea class="form-control " id="diagnosis" name="diagnosis" ></textarea>
+                                          </div>
+                                      </div>
+                                      <div class="form-group ">
+                                          <label for="treatment" class="control-label col-lg-2">Treatment</label>
+                                          <div class="col-lg-10">
+                                              <textarea class="form-control " id="treatment" name="treatment" ></textarea>
+                                          </div>
+                                      </div>
+                                      <div class="form-group">
+                                            <label for="vaccineType" class="control-label col-lg-2">Vaccine</label>
+                                            <div class="col-lg-10">
+                                                <select class="form-control m-bot15">
+                                                    <option>DDT</option>
+                                                    <option>Rotarix</option>
+                                                </select>
+                                             </div>
+                                      </div>
+                                      <div class="form-group">
+                                          <div class="col-lg-offset-2 col-lg-10">
+                                              <button class="btn btn-primary" type="submit">Save</button>
+                                              <a href="billing.html"><button class="btn btn-default" type="button">Billing</button></a>
+                                              <a href="patient_previousHistory.html"><button class="btn btn-default" type="button">View Previous History</button></a>
+
+                                          </div>
+                                      </div>
+                                  </form>
+                              </div>
+
+                          </div>
+                      </section>
+                  </div>
+              </div>
+
+          </section>
+      </section>
+      <!--main content end-->
+
+
+  <!-- container section end -->
+
+    <!-- javascripts -->
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <!-- nice scroll -->
+    <script src="js/jquery.scrollTo.min.js"></script>
+    <script src="js/jquery.nicescroll.js" type="text/javascript"></script>
+    <!-- jquery validate js -->
+    <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+
+    <!-- custom form validation script for this page-->
+    <script src="js/form-validation-script.js"></script>
+    <!--custome script for all page-->
+    <script src="js/scripts.js"></script>
+
+
+  </body>
+</html>
