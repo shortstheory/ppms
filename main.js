@@ -105,7 +105,6 @@ var patientResultCallback = function(rows, res) {
 }
 
 var patientEditCallback = function(rows, res) {
-    console.log(rows[0].MOBILE);
     fs.readFile(path.join(__dirname+'/PPMS_GUI/patient_editPatient.html'), 'utf-8', function(err, html) {
         jsdom.env(html,null, function(err, window) {
             var $ = require('jquery')(window);
@@ -113,11 +112,9 @@ var patientEditCallback = function(rows, res) {
             $("#dateOfBirth").attr("value", rows[0].DOB);
             $("#mobileNo").attr("value", "" + rows[0].MOBILE + "");
             $("#address").html(rows[0].ADDRESS);
-            console.log('<html>'+$("html").html()+'</html>');
             res.send('<html>'+$("html").html()+'</html>');
         });
     });
-
 }
 
 var patientManagementCallback = function(rows, res) {
@@ -177,14 +174,26 @@ app.get('/index', function(req, res){
     // }
 });
 
-app.get('/patient_saveCurrentVisit', function(req, res) {
+var billingCallback = function(rows, res) {
+    fs.readFile(path.join(__dirname+'/PPMS_GUI/billing.html'), 'utf-8', function(err, html) {
+        jsdom.env(html,null, function(err, window) {
+            var $ = require('jquery')(window);
+            $("#vaccine_cost").attr("value", rows[0].PRICE);
+            console.log(rows[0].PRICE);
+            res.send('<html>'+$("html").html()+'</html>');
+        });
+    });
+}
+
+app.get('/billing', function(req, res) {
     var vaccine = req.query.vaccineName;
     if (vaccine !== 'None') {
         sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_VISITS_D (PID, DID, VISIT_DATE, DIAGNOSIS, TREATMENT) VALUES (' + openPatientId + ', ' + openDoctorId + ' , DATE(SYSDATE()), "' + req.query.diagnosis + '", "' + req.query.treatment + '")', function(rows, res){console.log(rows);}, res);
-        sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_TAKES_V (PID, VID, VISIT_ID) VALUES (' + openPatientId + ', (SELECT ID FROM VACCINE WHERE NAME="' + vaccine + '"), (SELECT MAX(VISIT_ID) FROM P_VISITS_D))', function(rows, res){ console.log(rows); res.sendFile(path.join(__dirname+'/PPMS_GUI/billing.html'));}, res);
-    }
-    else {
-      sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_VISITS_D (PID, DID, VISIT_DATE, DIAGNOSIS, TREATMENT) VALUES (' + openPatientId + ', ' + openDoctorId + ' , DATE(SYSDATE()), "' + req.query.diagnosis + '", "' + req.query.treatment + '")', function(rows, res){console.log(rows);res.sendFile(path.join(__dirname+'/PPMS_GUI/billing.html'));}, res);
+        sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_TAKES_V (PID, VID, VISIT_ID) VALUES (' + openPatientId + ', (SELECT ID FROM VACCINE WHERE NAME="' + vaccine + '"), (SELECT MAX(VISIT_ID) FROM P_VISITS_D))', function(rows, res){}, res);
+        sqlquery.runQuery(myconnection, 'SELECT PRICE FROM VACCINE WHERE NAME="' + vaccine + '"', billingCallback, res);
+    } else {
+        sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_VISITS_D (PID, DID, VISIT_DATE, DIAGNOSIS, TREATMENT) VALUES (' + openPatientId + ', ' + openDoctorId + ' , DATE(SYSDATE()), "' + req.query.diagnosis + '", "' + req.query.treatment + '")', function(rows, res){console.log(rows)}, res);
+        res.sendFile(path.join(__dirname+'/PPMS_GUI/billing.html'));
     }
 });
 
