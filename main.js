@@ -12,6 +12,8 @@ var jsdom = require('jsdom');
 
 app = express();
 
+var openPatientId;
+
 var myconnection = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
@@ -69,7 +71,7 @@ function patientTableTransform(rows) {
             'html': '${ADDRESS}'
         },{
             'tag': 'td',
-            'html': '<div class="btn-group"><a class="btn btn-primary" href="editPatient?patientId=${ID}"><i class="icon_plus_alt2"></i></a><a class="btn btn-success" href="patientManagment?patientId=${ID}"><i class="icon_check_alt2"></i></a><a class="btn btn-danger" href="patientResult?deletePatientId=${ID}"><i class="icon_close_alt2"></i></a></div>'
+            'html': '<div class="btn-group"><a class="btn btn-primary" href="editPatient?patientId=${ID}"><i class="icon_plus_alt2"></i></a><a class="btn btn-success" href="patientManagement?patientId=${ID}"><i class="icon_check_alt2"></i></a><a class="btn btn-danger" href="patientResult?deletePatientId=${ID}"><i class="icon_close_alt2"></i></a></div>'
         }]
     };
     var html = json2html.transform(rows, transform);
@@ -115,6 +117,21 @@ var patientEditCallback = function(rows, res) {
 
 }
 
+var patientManagementCallback = function(rows, res) {
+  fs.readFile(path.join(__dirname+'/PPMS_GUI/patient_currentVisit.html'), 'utf-8', function(err, html) {
+      jsdom.env(html,null, function(err, window) {
+          var $ = require('jquery')(window);
+          $("#patientName").html(rows[0].NAME);
+          $("#dateOfBirth").html(rows[0].DOB);
+          $("#mobileNo").html(rows[0].MOBILE);
+          // $("#vaccines").html(getVaccineList());
+          // console.log($("#patientName").val());
+          // console.log(html);
+          res.send('<html>'+$("html").html()+'</html>');
+      });
+  });
+};
+
 var resultCallback = function(rows, res) {
     if (typeof rows == 'undefined') {
         res.send('Nothing to display');
@@ -140,6 +157,11 @@ app.use(express.static(__dirname + '/PPMS_GUI'));
 app.get('/index', function(req, res){
     console.log('Fetching today\'s patients');
     sqlquery.runQuery(myconnection,'SELECT P.NAME, P.MOBILE, P.ADDRESS FROM PATIENT P, P_VISITS_D PD WHERE P.ID = PD.PID AND PD.VISIT_DATE=DATE(SYSDATE())' , resultCallback, res);
+});
+
+app.get('/patientManagement', function(req, res) {
+    openPatientId = req.query.patientId;
+    sqlquery.runQuery(myconnection, 'SELECT ID, NAME, MOBILE, DOB FROM PATIENT WHERE ID=' + openPatientId + 'UNION SELECT * FROM VACCINE', patientManagementCallback,res);
 });
 
 var q;
