@@ -11,6 +11,12 @@
     "mysql": "^2.5.4",
     "node-json2html": "*",
     "query.js": "*",
+    "body-parser": "*",
+    "tableify": "*",
+    "jsdom": "*",
+    "jquery": "*",
+    "node-json2html": "*",
+    "crypto": "*",
     "tableify": "*"
   },
   "author": "arnav dhamija",
