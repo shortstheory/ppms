@@ -4,15 +4,20 @@
   "description": "A way to use Node to access MySQL databases",
   "main": "main.js",
   "dependencies": {
+    "body-parser": "^1.17.1",
     "express": "^4.10.6",
+    "jquery": "*",
+    "jsdom": "*",
     "mysql": "^2.5.4",
+    "node-json2html": "*",
     "query.js": "*",
     "body-parser": "*",
     "tableify": "*",
     "jsdom": "*",
     "jquery": "*",
     "node-json2html": "*",
-    "crypto": "*"
+    "crypto": "*",
+    "tableify": "*"
   },
   "author": "arnav dhamija",
   "license": "ISC"
