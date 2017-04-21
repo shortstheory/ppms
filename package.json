@@ -11,7 +11,8 @@
     "tableify": "*",
     "jsdom": "*",
     "jquery": "*",
-    "node-json2html": "*"
+    "node-json2html": "*",
+    "crypto": "*"
   },
   "author": "arnav dhamija",
   "license": "ISC"
