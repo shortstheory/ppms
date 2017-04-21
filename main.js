@@ -17,7 +17,7 @@ var openPatientId;
 var myconnection = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
-    database : 'ppms'
+    database : 'tut'
 });
 
 myconnection.connect(function(err) {
@@ -128,7 +128,7 @@ var patientManagementCallback = function(rows, res) {
           $("#mobileNo").html(rows[0].MOBILE);
 
           var transform = {
-              
+
           };
           // $("#vaccines").html(getVaccineList());
           // console.log($("#patientName").val());
@@ -161,8 +161,13 @@ var insertCallback = function(rows, res){
 app.use(express.static(__dirname + '/PPMS_GUI'));
 
 app.get('/index', function(req, res){
-    console.log('Fetching today\'s patients');
-    sqlquery.runQuery(myconnection,'SELECT P.NAME, P.MOBILE, P.ADDRESS FROM PATIENT P, P_VISITS_D PD WHERE P.ID = PD.PID AND PD.VISIT_DATE=DATE(SYSDATE())' , resultCallback, res);
+    //console.log('Fetching today\'s patients');
+    //sqlquery.runQuery(myconnection,'SELECT P.NAME, P.MOBILE, P.ADDRESS FROM PATIENT P, P_VISITS_D PD WHERE P.ID = PD.PID AND PD.VISIT_DATE=DATE(SYSDATE())' , resultCallback, res);
+    //console.log(req.query);
+    // if (typeof req.query.type !== 'undefined') {
+    //     console.log('execrCQ');
+         sqlquery.runCommitQuery(myconnection, 'UPDATE PATIENT SET NAME="' + req.query.patientName + '", DOB="' + req.query.dateOfBirth + '", MOBILE=' + req.query.mobileNo + ', ADDRESS="' + req.query.address + '" WHERE ID=' + openPatientId, function(){}, res);
+    // }
 });
 
 app.get('/patientManagement', function(req, res) {
@@ -209,6 +214,7 @@ app.get('/patient_newPatientRecord', function(req, res) {
 });
 
 app.get('/editPatient', function(req, res) {
+    openPatientId = req.query.patientId;
     sqlquery.runQuery(myconnection, 'SELECT NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE ID=' + req.query.patientId, patientEditCallback, res);
 });
 
