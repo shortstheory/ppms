@@ -10,7 +10,13 @@ var path = require('path')
 var tableify = require('tableify');
 var jsdom = require('jsdom');
 
+var bodyParser = require('body-parser')
+
 app = express();
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+}));
 
 var openPatientId;
 var openDoctorId = 1;
@@ -235,6 +241,28 @@ app.get('/billing', function(req, res) {
         sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_VISITS_D (PID, DID, VISIT_DATE, DIAGNOSIS, TREATMENT) VALUES (' + openPatientId + ', ' + openDoctorId + ' , DATE(SYSDATE()), "' + req.query.diagnosis + '", "' + req.query.treatment + '")', function(rows, res){console.log(rows)}, res);
         res.sendFile(path.join(__dirname+'/PPMS_GUI/billing.html'));
     }
+});
+
+var loginCallback = function(rows, res) {
+    console.log(rows);
+    if (typeof rows == 'undefined' || rows.length == 0) {
+      fs.readFile(path.join(__dirname+'/PPMS_GUI/login.html'), 'utf-8', function(err, html) {
+          jsdom.env(html,null, function(err, window) {
+              var $ = require('jquery')(window);
+              $("#wrongPassword").html('Wrong Password! Try again.');
+              res.send('<html>'+$("html").html()+'</html>');
+          });
+      });
+    }
+    else {
+        return res.redirect('/index.html');
+    }
+};
+
+app.post('/home', function(req, res){
+    var name = req.body.uname;
+    var pass = req.body.passw;
+    sqlquery.runQuery(myconnection, 'SELECT * FROM DOCTOR WHERE NAME="' + name + '" AND PASSWORD="' + pass + '"', loginCallback, res);
 });
 
 app.get('/patientManagement', function(req, res) {
