@@ -101,6 +101,20 @@ var patientResultCallback = function(rows, res) {
     });
 }
 
+var patientEditCallback = function(rows, res) {
+    console.log(rows[0].NAME);
+    fs.readFile(path.join(__dirname+'/PPMS_GUI/patient_editPatient.html'), 'utf-8', function(err, html) {
+        jsdom.env(html,null, function(err, window) {
+            var $ = require('jquery')(window);
+            $("#patientName").val('JIHADI');
+            console.log($("#patientName").val());
+            console.log(html);
+            res.send('<html>'+$("html").html()+'</html>');
+        });
+    });
+
+}
+
 var resultCallback = function(rows, res) {
     if (typeof rows == 'undefined') {
         res.send('Nothing to display');
@@ -146,6 +160,10 @@ app.get('/vaccine_addVaccine', function(req, res) {
 
 app.get('/patient_newPatientRecord', function(req, res) {
     sqlquery.runCommitQuery(myconnection,'INSERT INTO PATIENT (NAME, DOB, MOBILE, ADDRESS) VALUES("' + req.query.patientName + '", "' + req.query.dateOfBirth + '", "' + req.query.mobileNo + '", "' + req.query.address + '")' , insertCallback, res);
+});
+
+app.get('/editPatient', function(req, res) {
+    sqlquery.runQuery(myconnection, 'SELECT NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE ID=' + req.query.patientId, patientEditCallback, res);
 });
 
 
