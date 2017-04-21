@@ -69,11 +69,11 @@ function patientTableTransform(rows) {
             'html': '${ADDRESS}'
         },{
             'tag': 'td',
-            'html': '<div class="btn-group"><a class="btn btn-primary" href="editPatient?patientId=${ID}"><i class="icon_plus_alt2"></i></a><a class="btn btn-success" href="patientManagment?patientId={ID}"><i class="icon_check_alt2"></i></a><a class="btn btn-danger" href="patientResult?deletePatientId=${ID}"><i class="icon_close_alt2"></i></a></div>'
+            'html': '<div class="btn-group"><a class="btn btn-primary" href="editPatient?patientId=${ID}"><i class="icon_plus_alt2"></i></a><a class="btn btn-success" href="patientManagment?patientId=${ID}"><i class="icon_check_alt2"></i></a><a class="btn btn-danger" href="patientResult?deletePatientId=${ID}"><i class="icon_close_alt2"></i></a></div>'
         }]
     };
     var html = json2html.transform(rows, transform);
-    var tableHeader = '<tr><th>ID</th><th>NAME</th><th>DOB</th><th>MOBILE</th><th>ADDRESS</th></tr><tr><th>ACTION</th></tr>';
+    var tableHeader = '<tr><th>ID</th><th>NAME</th><th>DOB</th><th>MOBILE</th><th>ADDRESS</th></tr>'; //<tr><th>ACTION</th></tr>';
     html = tableHeader + html;
     return html;
 }
