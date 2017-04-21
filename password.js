@@ -5,8 +5,7 @@ var mysql = require('mysql');
 var password = module.exports = {
     createUser: function (connection, username, plainTextPassword, mobileNo) {
         passwordData = saltHashPassword(plainTextPassword);
-
-        connection.runCommitQuery: function (connection, "INSERT INTO DOCTOR(NAME, PASSWORD, MOBILE) VALUES('" + username + "', '" + passwordData.passwordHash + "', " + mobileNo);
+        sqlquery.runCommitQuery(connection, "INSERT INTO DOCTOR(NAME, PASSWORD, MOBILE) VALUES('" + username + "', '" + passwordData.passwordHash + "', " + mobileNo + ")", function(rows, res){}, null);
     }
 };
 
@@ -25,6 +24,6 @@ var sha512 = function(password, salt) {
 };
 
 function saltHashPassword(userpassword) {
-    var salt = genRandomString(16); /** Gives us salt of length 16 */
+    var salt = generateSalt(16); /** Gives us salt of length 16 */
     return sha512(userpassword, salt);
 }

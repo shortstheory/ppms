@@ -1,6 +1,6 @@
 var query = require('./query.js')
 var sqlquery = require('./sqlquery.js')
-
+var password = require('./password.js')
 var http = require('http');
 var mysql = require('mysql');
 var express = require('express')
@@ -24,7 +24,7 @@ var openDoctorId = 1;
 var myconnection = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
-    database : 'ppms'
+    database : 'tut'
 });
 
 myconnection.connect(function(err) {
@@ -347,3 +347,5 @@ app.listen(8081, function() {
 var html = fs.readFileSync(path.join(__dirname+'/PPMS_GUI/vaccine_result.html'), 'utf-8');
 
 console.log('Server running at http://127.0.0.1:8081/');
+
+password.createUser(myconnection, 'dhamija', 'iluvairplane', 9876543210);
