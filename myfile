@@ -2,11 +2,8 @@ Server running at http://127.0.0.1:8081/
 on8081
 Connected to database.
 SELECT NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE ID=1
-Kalpana Ahluwalia
-JIHADI
-<!DOCTYPE html>
-<html lang="en">
-  <head>
+9998193761
+<html><head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Creative - Bootstrap 3 Responsive Admin Template">
@@ -22,11 +19,11 @@ JIHADI
     <link href="css/bootstrap-theme.css" rel="stylesheet">
     <!--external css-->
     <!-- font icon -->
-    <link href="css/elegant-icons-style.css" rel="stylesheet" />
-    <link href="css/font-awesome.min.css" rel="stylesheet" />
+    <link href="css/elegant-icons-style.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
     <!-- Custom styles -->
     <link href="css/style.css" rel="stylesheet">
-    <link href="css/style-responsive.css" rel="stylesheet" />
+    <link href="css/style-responsive.css" rel="stylesheet">
 
 
   </head>
@@ -53,7 +50,7 @@ JIHADI
 
       <!--sidebar start-->
       <aside>
-          <div id="sidebar"  class="nav-collapse ">
+          <div id="sidebar" class="nav-collapse ">
               <!-- sidebar menu start-->
               <ul class="sidebar-menu">
                   <li class="active">
@@ -119,19 +116,19 @@ JIHADI
                                   <form class="form-validate form-horizontal" id="feedback_form" method="get" action="">
                                       <div class="form-group ">
                                           <label for="patientName" class="control-label col-lg-2">Patient Name <span class="required">*</span></label>
-                                          <div class="col-lg-10">
-                                              <input class="form-control" id="patientName" name="patientName" type="text" required />
+                                          <div class="col-lg-10" id="patientNameDiv">
+                                              <input class="form-control" id="patientName" name="patientName" type="text" required="" value="Kalpana Ahluwalia">
                                           </div>
                                       </div>
                                       <div class="form-group ">
                                           <label for="dateOfBirth" class="control-label col-lg-2">Date of Birth <span class="required">*</span></label>
-                                          <div class="col-lg-10">
-                                              <input class="form-control " id="dateOfBirth" type="text" name="dateOfBirth" required />
+                                          <div class="col-lg-10" id="dobDiv">
+                                              <input class="form-control " id="dateOfBirth" type="text" name="dateOfBirth" required="" value="Wed Jul 18 2001 00:00:00 GMT+0530 (IST)">
                                           </div>
                                       </div>
                                       <div class="form-group">
                                             <label for="gender" class="control-label col-lg-2">Sex<span class="required">*</span></label>
-                                            <div class="col-lg-10">
+                                            <div class="col-lg-10" id="genderDiv">
                                                 <select class="form-control m-bot15">
                                                     <option>Male</option>
                                                     <option>Female</option>
@@ -140,15 +137,15 @@ JIHADI
                                       </div>
                                       <div class="form-group ">
                                           <label for="mobileNo" class="control-label col-lg-2">Mobile No.<span class="required">*</span></label>
-                                          <div class="col-lg-10">
-                                              <input class="form-control " id="mobileNo" type="text" name="mobileNo" />
+                                          <div class="col-lg-10" id="mobileNoDiv">
+                                              <input class="form-control " id="mobileNo" type="text" name="mobileNo" values="9998193761">
                                           </div>
                                       </div>
 
                                       <div class="form-group ">
                                           <label for="address" class="control-label col-lg-2">Address</label>
                                           <div class="col-lg-10">
-                                              <textarea class="form-control " id="address" name="address" ></textarea>
+                                              <textarea class="form-control " id="address" name="address">Sainikpuri</textarea>
                                           </div>
                                       </div>
                                       <div class="form-group">
@@ -187,6 +184,6 @@ JIHADI
     <script src="js/scripts.js"></script>
 
 
-  </body>
-</html>
+  
 
+</section></body></html>
