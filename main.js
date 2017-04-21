@@ -67,10 +67,13 @@ function patientTableTransform(rows) {
         },{
             'tag': 'td',
             'html': '${ADDRESS}'
+        },{
+            'tag': 'td',
+            'html': '<div class="btn-group"><a class="btn btn-primary" href="editPatient?patientId=${ID}"><i class="icon_plus_alt2"></i></a><a class="btn btn-success" href="patientManagment?patientId={ID}"><i class="icon_check_alt2"></i></a><a class="btn btn-danger" href="patientResult?deletePatientId=${ID}"><i class="icon_close_alt2"></i></a></div>'
         }]
     };
     var html = json2html.transform(rows, transform);
-    var tableHeader = '<tr><th>ID</th><th>NAME</th><th>DOB</th><th>MOBILE</th><th>ADDRESS</th></tr>';
+    var tableHeader = '<tr><th>ID</th><th>NAME</th><th>DOB</th><th>MOBILE</th><th>ADDRESS</th></tr><tr><th>ACTION</th></tr>';
     html = tableHeader + html;
     return html;
 }
@@ -87,19 +90,19 @@ var vaccineResultCallback = function(rows, res) {
 }
 
 var patientResultCallback = function(rows, res) {
-    var tableHtml = patientResultTransform(rows);//tableify(rows);
-    fs.readFile(path.join(__dirname+'/PPMS_GUI/vaccine_result.html'), 'utf-8', function(err, html) {
+    console.log(rows);
+    var tableHtml = patientTableTransform(rows);//tableify(rows);
+    fs.readFile(path.join(__dirname+'/PPMS_GUI/patient_result.html'), 'utf-8', function(err, html) {
         jsdom.env(html,null, function(err, window) {
             var $ = require('jquery')(window);
-            $("#vaccineTable").html(tableHtml);
+            $("#patientTable").html(tableHtml);
             res.send('<html>'+$("html").html()+'</html>');
         });
     });
 }
 
 var resultCallback = function(rows, res) {
-    if (typeof rows == 'undefined')
-    {
+    if (typeof rows == 'undefined') {
         res.send('Nothing to display');
         return;
     }
@@ -107,20 +110,6 @@ var resultCallback = function(rows, res) {
     var html = tableify(rows);
     console.log(html);
     res.send(html);
-/*    var transform = {
-        tag: 'tr',
-        children: [{
-                'tag': 'td',
-                'html': '${exam}'
-            }, {
-                'tag': 'td',
-                'html': '${marks}'
-        }]
-    };
-    var html = json2html.transform(rows, transform);
-    var tableHeader = '<tr><td>exam</td><td>marks</td></tr>'
-    html = '<table id = "markstable">' + tableHeader + html + '</table>'
-    res.send(html); */
 };
 
 var insertCallback = function(rows, res){
@@ -141,13 +130,13 @@ app.get('/index', function(req, res){
 
 app.get('/patientResult', function(req, res) {
     var type = req.query.type;
-    if(type == 'name') {
-        sqlquery.runQuery(myconnection, 'SELECT * FROM PATIENT WHERE NAME LIKE "%' + req.query.pname + '%"', resultCallback, res);
-    } else if(type == 'mobile') {
-        sqlquery.runQuery(myconnection,'SELECT * FROM PATIENT WHERE MOBILE=' + req.query.mobileNo, resultCallback, res);
-    } else if(type == 'date') {
+    if (type == 'name') {
+        sqlquery.runQuery(myconnection, 'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE NAME LIKE "%' + req.query.pname + '%"', patientResultCallback, res);
+    } else if (type == 'mobile') {
+        sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE MOBILE=' + req.query.mobileNo, patientResultCallback, res);
+    } else if (type == 'date') {
         var date = req.query.year+'-'+req.query.month+'-'+req.query.day;
-        sqlquery.runQuery(myconnection,'SELECT * FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE="' + date + '"', resultCallback, res);
+        sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE="' + date + '"', patientResultCallback, res);
     }
 });
 
@@ -178,7 +167,7 @@ app.get('/vaccineResult', function(req, res) {
         lastVaccineQuery = req.query.searchVaccine;
         sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + req.query.searchVaccine + '%"', vaccineResultCallback, res);
     } else if (typeof req.query.deleteValue !== 'undefined') {
-        sqlquery.runCommitQuery(myconnection, 'DELETE FROM VACCINE WHERE NAME="' + req.query.deleteValue + '"', function(rows, res){}, res);
+        sqlquery.runCommitQuery(myconnection, 'DELETE FROM VACCINE WHERE NAME="' + req.query.deleteValue + '"', function(rows, res){console.log(rows)}, res);
         sqlquery.runQuery(myconnection, 'SELECT NAME, PRICE, STOCK FROM VACCINE WHERE NAME LIKE "%' + lastVaccineQuery + '%"', vaccineResultCallback, res);
     }
 });
