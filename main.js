@@ -104,13 +104,15 @@ var patientResultCallback = function(rows, res) {
 }
 
 var patientEditCallback = function(rows, res) {
-    console.log(rows[0].NAME);
+    console.log(rows[0].MOBILE);
     fs.readFile(path.join(__dirname+'/PPMS_GUI/patient_editPatient.html'), 'utf-8', function(err, html) {
         jsdom.env(html,null, function(err, window) {
             var $ = require('jquery')(window);
-            $("#patientName").val('JIHADI');
-            console.log($("#patientName").val());
-            console.log(html);
+            $("#patientName").attr("value", rows[0].NAME);
+            $("#dateOfBirth").attr("value", rows[0].DOB);
+            $("#mobileNo").attr("value", "" + rows[0].MOBILE + "");
+            $("#address").html(rows[0].ADDRESS);
+            console.log('<html>'+$("html").html()+'</html>');
             res.send('<html>'+$("html").html()+'</html>');
         });
     });
