@@ -126,6 +126,10 @@ var patientManagementCallback = function(rows, res) {
           $("#patientName").html(rows[0].NAME);
           $("#dateOfBirth").html(rows[0].DOB);
           $("#mobileNo").html(rows[0].MOBILE);
+
+          var transform = {
+              
+          };
           // $("#vaccines").html(getVaccineList());
           // console.log($("#patientName").val());
           // console.log(html);
