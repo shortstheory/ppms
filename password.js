@@ -5,7 +5,7 @@ var mysql = require('mysql');
 var password = module.exports = {
     createUser: function (connection, username, plainTextPassword, mobileNo) {
         passwordData = saltHashPassword(plainTextPassword);
-        sqlquery.runCommitQuery(connection, "INSERT INTO DOCTOR(NAME, PASSWORD, MOBILE) VALUES('" + username + "', '" + passwordData.passwordHash + "', " + mobileNo + ")", function(rows, res){}, null);
+        sqlquery.runCommitQuery(connection, "INSERT INTO DOCTOR(NAME, PASSWORD, MOBILE, SALT) VALUES('" + username + "', '" + passwordData.passwordHash + "', '" + mobileNo + "', '" + passwordData.salt + "')", function(rows, res){}, null);
     }
 };
 

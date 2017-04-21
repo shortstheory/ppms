@@ -24,7 +24,7 @@ var openDoctorId = 1;
 var myconnection = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
-    database : 'tut'
+    database : 'ppms'
 });
 
 myconnection.connect(function(err) {
@@ -224,8 +224,10 @@ var billingCallback = function(rows, res) {
     fs.readFile(path.join(__dirname+'/PPMS_GUI/billing.html'), 'utf-8', function(err, html) {
         jsdom.env(html,null, function(err, window) {
             var $ = require('jquery')(window);
-            $("#vaccine_cost").attr("value", rows[0].PRICE);
-            console.log(rows[0].PRICE);
+            if (typeof rows !== undefined) {
+                $("#vaccine_cost").attr("value", rows[0].PRICE);
+                console.log(rows[0].PRICE);
+            }
             res.send('<html>'+$("html").html()+'</html>');
         });
     });
@@ -237,7 +239,7 @@ app.get('/billing', function(req, res) {
         sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_VISITS_D (PID, DID, VISIT_DATE, DIAGNOSIS, TREATMENT) VALUES (' + openPatientId + ', ' + openDoctorId + ' , DATE(SYSDATE()), "' + req.query.diagnosis + '", "' + req.query.treatment + '")', function(rows, res){console.log(rows);}, res);
         sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_TAKES_V (PID, VID, VISIT_ID) VALUES (' + openPatientId + ', (SELECT ID FROM VACCINE WHERE NAME="' + vaccine + '"), (SELECT MAX(VISIT_ID) FROM P_VISITS_D))', function(rows, res){}, res);
         sqlquery.runQuery(myconnection, 'SELECT PRICE FROM VACCINE WHERE NAME="' + vaccine + '"', billingCallback, res);
-    } else {
+    } else {// if (req.query.length == 4) {
         sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_VISITS_D (PID, DID, VISIT_DATE, DIAGNOSIS, TREATMENT) VALUES (' + openPatientId + ', ' + openDoctorId + ' , DATE(SYSDATE()), "' + req.query.diagnosis + '", "' + req.query.treatment + '")', function(rows, res){console.log(rows)}, res);
         res.sendFile(path.join(__dirname+'/PPMS_GUI/billing.html'));
     }
@@ -348,4 +350,4 @@ var html = fs.readFileSync(path.join(__dirname+'/PPMS_GUI/vaccine_result.html'),
 
 console.log('Server running at http://127.0.0.1:8081/');
 
-password.createUser(myconnection, 'dhamija', 'iluvairplane', 9876543210);
+//password.createUser(myconnection, 'asthana', 'iamlord', 7896543210);
