@@ -110,7 +110,7 @@
                           </header>
                           <div class="panel-body">
                               <div class="form">
-                                  <form class="form-validate form-horizontal" id="feedback_form" method="get" action="/patient_newPatientRecord">
+                                  <form class="form-validate form-horizontal" id="feedback_form" method="get" action="/patient_saveCurrentVisit">
                                       <div class="form-group ">
                                           <label for="patientName" class="control-label col-lg-2">Patient Name</label>
                                           <div class="col-lg-2">
@@ -142,9 +142,8 @@
                                       <div class="form-group">
                                             <label for="vaccineType" class="control-label col-lg-2">Vaccine</label>
                                             <div class="col-lg-10">
-                                                <select id="vaccines" class="form-control m-bot15">
-                                                    <option>DDT</option>
-                                                    <option>Rotarix</option>
+                                                <select id="vaccines" name="vaccineName" class="form-control m-bot15">
+                                                  <option>Dummy</option>
                                                 </select>
                                              </div>
                                       </div>

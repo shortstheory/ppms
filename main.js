@@ -13,6 +13,7 @@ var jsdom = require('jsdom');
 app = express();
 
 var openPatientId;
+var openDoctorId = 1;
 
 var myconnection = mysql.createConnection({
     host     : 'localhost',
@@ -128,9 +129,15 @@ var patientManagementCallback = function(rows, res) {
           $("#mobileNo").html(rows[0].MOBILE);
 
           var transform = {
-              
+              tag : '',
+              children : [{
+              'tag' : 'option',
+              'html' : '${NAME}'
+            }]
           };
-          // $("#vaccines").html(getVaccineList());
+          rows.shift(); // Remove patient details from rows
+          var html = '<option selected> None </option>' + json2html.transform(rows, transform);
+          $("#vaccines").html(html);
           // console.log($("#patientName").val());
           // console.log(html);
           res.send('<html>'+$("html").html()+'</html>');
@@ -165,9 +172,20 @@ app.get('/index', function(req, res){
     sqlquery.runQuery(myconnection,'SELECT P.NAME, P.MOBILE, P.ADDRESS FROM PATIENT P, P_VISITS_D PD WHERE P.ID = PD.PID AND PD.VISIT_DATE=DATE(SYSDATE())' , resultCallback, res);
 });
 
+app.get('/patient_saveCurrentVisit', function(req, res) {
+    var vaccine = req.query.vaccineName;
+    if (vaccine !== 'None') {
+        sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_VISITS_D (PID, DID, VISIT_DATE, DIAGNOSIS, TREATMENT) VALUES (' + openPatientId + ', ' + openDoctorId + ' , DATE(SYSDATE()), "' + req.query.diagnosis + '", "' + req.query.treatment + '")', function(rows, res){console.log(rows);}, res);
+        sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_TAKES_V (PID, VID, VISIT_ID) VALUES (' + openPatientId + ', (SELECT ID FROM VACCINE WHERE NAME="' + vaccine + '"), (SELECT MAX(VISIT_ID) FROM P_VISITS_D))', function(rows, res){ console.log(rows); res.sendFile(path.join(__dirname+'/PPMS_GUI/billing.html'));}, res);
+    }
+    else {
+      sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_VISITS_D (PID, DID, VISIT_DATE, DIAGNOSIS, TREATMENT) VALUES (' + openPatientId + ', ' + openDoctorId + ' , DATE(SYSDATE()), "' + req.query.diagnosis + '", "' + req.query.treatment + '")', function(rows, res){console.log(rows);res.sendFile(path.join(__dirname+'/PPMS_GUI/billing.html'));}, res);
+    }
+});
+
 app.get('/patientManagement', function(req, res) {
     openPatientId = req.query.patientId;
-    sqlquery.runQuery(myconnection, 'SELECT ID, NAME, MOBILE, DOB FROM PATIENT WHERE ID=' + openPatientId + 'UNION SELECT * FROM VACCINE', patientManagementCallback,res);
+    sqlquery.runQuery(myconnection, 'SELECT ID, NAME, MOBILE, DOB FROM PATIENT WHERE ID=' + openPatientId + ' UNION SELECT * FROM VACCINE', patientManagementCallback,res);
 });
 
 var q;
