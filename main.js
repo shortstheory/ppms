@@ -18,7 +18,7 @@ var openDoctorId = 1;
 var myconnection = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
-    database : 'tut'
+    database : 'ppms'
 });
 
 myconnection.connect(function(err) {
@@ -78,6 +78,30 @@ function patientTableTransform(rows) {
     var html = json2html.transform(rows, transform);
     var tableHeader = '<tr><th>ID</th><th>NAME</th><th>DOB</th><th>MOBILE</th><th>ADDRESS</th></tr>'; //<tr><th>ACTION</th></tr>';
     html = tableHeader + html;
+    return html;
+}
+
+function historyTableTransform(rows) {
+    var transform = {
+        tag : 'tr',
+        children : [{
+            'tag' : 'td',
+            'html' : '${VISIT_ID}'
+        },{
+            'tag' : 'td',
+            'html' : '${DIAGNOSIS}'
+        },{
+            'tag' : 'td',
+            'html' : '${TREATMENT}'
+        },{
+            'tag' : 'td',
+            'html' : '${VACCINE_NAME}'
+        }]
+    };
+    var html = json2html.transform(rows, transform);
+    var tableHeader = '<tr><th>Visit ID</th><th>Diagnosis</th><th>Treatment</th><th>Vaccine</th></tr>';
+    html = tableHeader + html;
+    console.log(html)
     return html;
 }
 
@@ -142,6 +166,18 @@ var patientManagementCallback = function(rows, res) {
   });
 };
 
+var historyCallback = function(rows, res) {
+  console.log(rows);
+  var tableHtml = historyTableTransform(rows);//tableify(rows);
+  fs.readFile(path.join(__dirname+'/PPMS_GUI/patient_previousHistory.html'), 'utf-8', function(err, html) {
+      jsdom.env(html,null, function(err, window) {
+          var $ = require('jquery')(window);
+          $("#previousHistoryTable").html(tableHtml);
+          res.send('<html>'+$("html").html()+'</html>');
+      });
+  });
+};
+
 var resultCallback = function(rows, res) {
     if (typeof rows == 'undefined') {
         res.send('Nothing to display');
@@ -172,6 +208,10 @@ app.get('/index', function(req, res){
     //     console.log('execrCQ');
          sqlquery.runCommitQuery(myconnection, 'UPDATE PATIENT SET NAME="' + req.query.patientName + '", DOB="' + req.query.dateOfBirth + '", MOBILE=' + req.query.mobileNo + ', ADDRESS="' + req.query.address + '" WHERE ID=' + openPatientId, function(){}, res);
     // }
+});
+
+app.get('/patient_previousHistory', function(req, res) {
+    sqlquery.runQuery(myconnection, 'select PVD.VISIT_ID, PVD.DIAGNOSIS, PVD.TREATMENT, V.NAME AS VACCINE_NAME FROM P_VISITS_D PVD, P_TAKES_V PTV, VACCINE V WHERE PVD.VISIT_ID=PTV.VISIT_ID AND PTV.VID=V.ID AND PVD.PID=' + openPatientId + ' UNION SELECT VISIT_ID, DIAGNOSIS, TREATMENT, "None" AS VACCINE_NAME FROM P_VISITS_D WHERE PID=' + openPatientId, historyCallback, res);
 });
 
 var billingCallback = function(rows, res) {
