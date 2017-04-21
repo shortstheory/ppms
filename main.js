@@ -15,7 +15,7 @@ app = express();
 var myconnection = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
-    database : 'tut'
+    database : 'ppms'
 });
 
 myconnection.connect(function(err) {
@@ -144,15 +144,33 @@ app.get('/index', function(req, res){
     sqlquery.runQuery(myconnection,'SELECT P.NAME, P.MOBILE, P.ADDRESS FROM PATIENT P, P_VISITS_D PD WHERE P.ID = PD.PID AND PD.VISIT_DATE=DATE(SYSDATE())' , resultCallback, res);
 });
 
+var q;
 app.get('/patientResult', function(req, res) {
-    var type = req.query.type;
-    if (type == 'name') {
-        sqlquery.runQuery(myconnection, 'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE NAME LIKE "%' + req.query.pname + '%"', patientResultCallback, res);
-    } else if (type == 'mobile') {
-        sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE MOBILE=' + req.query.mobileNo, patientResultCallback, res);
-    } else if (type == 'date') {
-        var date = req.query.year+'-'+req.query.month+'-'+req.query.day;
-        sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE="' + date + '"', patientResultCallback, res);
+    if (typeof req.query.type !== 'undefined')
+    {
+      q = req.query;
+      var type = req.query.type;
+      if (type == 'name') {
+          sqlquery.runQuery(myconnection, 'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE NAME LIKE "%' + req.query.pname + '%"', patientResultCallback, res);
+      } else if (type == 'mobile') {
+          sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE MOBILE=' + req.query.mobileNo, patientResultCallback, res);
+      } else if (type == 'date') {
+          var date = req.query.year+'-'+req.query.month+'-'+req.query.day;
+          sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE="' + date + '"', patientResultCallback, res);
+      }
+    }
+    else if (typeof req.query.deletePatientId !== 'undefined')
+    {
+      sqlquery.runCommitQuery(myconnection, 'DELETE FROM PATIENT WHERE ID=' + req.query.deletePatientId, function(rows, res){console.log(rows);}, res);
+      var type = q.type;
+      if (type == 'name') {
+          sqlquery.runQuery(myconnection, 'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE NAME LIKE "%' + q.pname + '%"', patientResultCallback, res);
+      } else if (type == 'mobile') {
+          sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE MOBILE=' + q.mobileNo, patientResultCallback, res);
+      } else if (type == 'date') {
+          var date = q.year+'-'+q.month+'-'+q.day;
+          sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE="' + date + '"', patientResultCallback, res);
+      }
     }
 });
 
