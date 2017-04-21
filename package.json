@@ -10,7 +10,8 @@
     "body-parser": "*",
     "tableify": "*",
     "jsdom": "*",
-    "jquery": "*"
+    "jquery": "*",
+    "node-json2html": "*"
   },
   "author": "arnav dhamija",
   "license": "ISC"
