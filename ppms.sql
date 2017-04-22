@@ -16,31 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `ADMIN`
---
-
-DROP TABLE IF EXISTS `ADMIN`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ADMIN` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `NAME` varchar(25) NOT NULL,
-  `PASSWORD` varchar(100) NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `ADMIN`
---
-
-LOCK TABLES `ADMIN` WRITE;
-/*!40000 ALTER TABLE `ADMIN` DISABLE KEYS */;
-INSERT INTO `ADMIN` VALUES (1,'Basha','vyasBhavan101'),(2,'Shorya','EC_roxxx!');
-/*!40000 ALTER TABLE `ADMIN` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `DOCTOR`
 --
 
@@ -50,12 +25,11 @@ DROP TABLE IF EXISTS `DOCTOR`;
 CREATE TABLE `DOCTOR` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `NAME` varchar(25) NOT NULL,
-  `PASSWORD` varchar(100) NOT NULL,
+  `PASSWORD` varchar(200) DEFAULT NULL,
   `MOBILE` char(10) DEFAULT NULL,
-  `ADMIN_ID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `ADMIN_ID` (`ADMIN_ID`),
-  CONSTRAINT `DOCTOR_ibfk_1` FOREIGN KEY (`ADMIN_ID`) REFERENCES `ADMIN` (`ID`)
+  `SALT` varchar(20) DEFAULT NULL,
+  `EMAIL` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -65,7 +39,7 @@ CREATE TABLE `DOCTOR` (
 
 LOCK TABLES `DOCTOR` WRITE;
 /*!40000 ALTER TABLE `DOCTOR` DISABLE KEYS */;
-INSERT INTO `DOCTOR` VALUES (1,'Parth Chaturvedi','rig_atharva_sama_yajur','9000000127',1),(2,'Rajiv Chaurasiya','hansadwani1556','9890000127',2),(3,'Aditi Shetty','doctor_hoon_mai!','9890000997',1);
+INSERT INTO `DOCTOR` VALUES (1,'Parth Chaturvedi','rig_atharva_sama_yajur','9000000127',NULL,NULL),(2,'Rajiv Chaurasiya','hansadwani1556','9890000127',NULL,NULL),(3,'Aditi Shetty','doctor_hoon_mai!','9890000997',NULL,NULL);
 /*!40000 ALTER TABLE `DOCTOR` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -82,6 +56,7 @@ CREATE TABLE `PATIENT` (
   `DOB` date DEFAULT NULL,
   `MOBILE` char(10) DEFAULT NULL,
   `ADDRESS` varchar(50) DEFAULT NULL,
+  `SEX` varchar(6) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -92,7 +67,7 @@ CREATE TABLE `PATIENT` (
 
 LOCK TABLES `PATIENT` WRITE;
 /*!40000 ALTER TABLE `PATIENT` DISABLE KEYS */;
-INSERT INTO `PATIENT` VALUES (1,'Kalpana Ahluwalia','2001-07-18','9998193761','Sainikpuri'),(2,'Abhijeet Yadav','1999-09-26','9091193761','Banjara Hills'),(3,'Shashank Yadav','2004-11-06','9091193905','Port Blair, Gachibowli'),(5,'Johnson Paul','2009-12-29','8701193905','Vancouver');
+INSERT INTO `PATIENT` VALUES (1,'Kalpana Ahluwalia','2001-07-18','9998193761','Sainikpuri',''),(2,'Abhijeet Yadav','1999-09-26','9091193761','Banjara Hills',''),(3,'Shashank Yadav','2004-11-06','9091193905','Port Blair, Gachibowli',''),(5,'Johnson Paul','2009-12-29','8701193905','Vancouver','');
 /*!40000 ALTER TABLE `PATIENT` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -111,8 +86,9 @@ CREATE TABLE `P_TAKES_V` (
   KEY `VID` (`VID`),
   KEY `VISIT_ID` (`VISIT_ID`),
   CONSTRAINT `P_TAKES_V_ibfk_1` FOREIGN KEY (`PID`) REFERENCES `PATIENT` (`ID`),
-  CONSTRAINT `P_TAKES_V_ibfk_2` FOREIGN KEY (`VID`) REFERENCES `VACCINE` (`ID`),
-  CONSTRAINT `P_TAKES_V_ibfk_3` FOREIGN KEY (`VISIT_ID`) REFERENCES `P_VISITS_D` (`VISIT_ID`)
+  CONSTRAINT `P_TAKES_V_ibfk_3` FOREIGN KEY (`VISIT_ID`) REFERENCES `P_VISITS_D` (`VISIT_ID`),
+  CONSTRAINT `P_TAKES_V_ibfk_4` FOREIGN KEY (`VID`) REFERENCES `VACCINE` (`ID`),
+  CONSTRAINT `P_TAKES_V_ibfk_5` FOREIGN KEY (`VID`) REFERENCES `VACCINE` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -122,7 +98,7 @@ CREATE TABLE `P_TAKES_V` (
 
 LOCK TABLES `P_TAKES_V` WRITE;
 /*!40000 ALTER TABLE `P_TAKES_V` DISABLE KEYS */;
-INSERT INTO `P_TAKES_V` VALUES (1,3,2),(3,5,1);
+INSERT INTO `P_TAKES_V` VALUES (5,2,9),(1,3,2),(3,5,1);
 /*!40000 ALTER TABLE `P_TAKES_V` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -146,7 +122,7 @@ CREATE TABLE `P_VISITS_D` (
   KEY `DID` (`DID`),
   CONSTRAINT `P_VISITS_D_ibfk_1` FOREIGN KEY (`PID`) REFERENCES `PATIENT` (`ID`),
   CONSTRAINT `P_VISITS_D_ibfk_2` FOREIGN KEY (`DID`) REFERENCES `DOCTOR` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -155,7 +131,7 @@ CREATE TABLE `P_VISITS_D` (
 
 LOCK TABLES `P_VISITS_D` WRITE;
 /*!40000 ALTER TABLE `P_VISITS_D` DISABLE KEYS */;
-INSERT INTO `P_VISITS_D` VALUES (1,3,1,'2017-02-17','Viral flu','Kuch nahi crocin le theek ho jaega',300),(2,1,1,'2017-03-10','Jaundice','Don\'t touch oil and fat!',300),(3,2,2,'2017-04-13','Cancer','Chemo, I guess',30000);
+INSERT INTO `P_VISITS_D` VALUES (1,3,1,'2017-02-17','Viral flu','Kuch nahi crocin le theek ho jaega',300),(2,1,1,'2017-03-10','Jaundice','Don\'t touch oil and fat!',300),(3,2,2,'2017-04-13','Cancer','Chemo, I guess',30000),(4,3,1,'2017-04-19','Viral','Crocin. Getting sick too freq',300),(5,1,1,'2017-04-21','Fine.','Vaccine only',NULL),(6,1,1,'2017-04-21','Not good.','No treatment possible.',NULL),(7,3,1,'2017-04-21','No problem.','Time for polio.',NULL),(8,2,1,'2017-04-21','-','-',NULL),(9,5,1,'2017-04-21','-','-',NULL);
 /*!40000 ALTER TABLE `P_VISITS_D` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -170,9 +146,11 @@ CREATE TABLE `VACCINE` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `NAME` varchar(25) NOT NULL,
   `PRICE` int(11) NOT NULL,
-  `STOCK` int(11) DEFAULT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+  `STOCK` int(11) DEFAULT '10',
+  PRIMARY KEY (`NAME`),
+  UNIQUE KEY `ID` (`ID`),
+  UNIQUE KEY `ID_2` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -181,7 +159,7 @@ CREATE TABLE `VACCINE` (
 
 LOCK TABLES `VACCINE` WRITE;
 /*!40000 ALTER TABLE `VACCINE` DISABLE KEYS */;
-INSERT INTO `VACCINE` VALUES (1,'Varilrix',700,6),(2,'MMR',300,2),(3,'Rotarix',1100,4),(4,'Polio',40,12),(5,'DPT',400,7);
+INSERT INTO `VACCINE` VALUES (10,'Boostrix',300,NULL),(5,'DPT',400,7),(2,'MMR',300,2),(4,'Polio',40,12),(3,'Rotarix',1100,4),(1,'Varilrix',700,6);
 /*!40000 ALTER TABLE `VACCINE` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -194,4 +172,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-04-18 22:40:10
+-- Dump completed on 2017-04-22 18:54:16

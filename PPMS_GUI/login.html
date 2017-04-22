@@ -10,7 +10,7 @@
 
     <title>PPMS</title>
 
-    <!-- Bootstrap CSS -->    
+    <!-- Bootstrap CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <!-- bootstrap theme -->
     <link href="css/bootstrap-theme.css" rel="stylesheet">
@@ -22,40 +22,39 @@
     <link href="css/style.css" rel="stylesheet">
     <link href="css/style-responsive.css" rel="stylesheet" />
 
-    
+
 </head>
 
   <body class="">
 
     <div class="container">
         <header class="header dark-bg">
-            
+
 
             <!--logo start-->
             <a href="index.html" class="logo">Paediatric Patient<span class="lite"> | MS</span></a>
             <!--logo end-->
 
-            
-      </header>      
-      <form class="login-form" a]>        
+      </header>
+      <form class="login-form" method='post' action="home">
         <div class="login-wrap">
             <p class=""><i class="icon_lock_alt"></i></p>
             <div class="input-group">
               <span class="input-group-addon"><i class="icon_profile"></i></span>
-              <input type="text" class="form-control" placeholder="Username" autofocus>
+              <input type="text" name="uname" class="form-control" placeholder="Username" autofocus>
             </div>
             <div class="input-group">
                 <span class="input-group-addon"><i class="icon_key_alt"></i></span>
-                <input type="password" class="form-control" placeholder="Password">
+                <input type="password" name="passw" class="form-control" placeholder="Password">
             </div>
-            
+
             <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
             <button class="btn btn-info btn-lg btn-block">Signup</button>
         </div>
       </form>
-      
+      <label id="wrongPassword"></label>
     <div class="text-right">
-            
+
         </div>
     </div>
 
