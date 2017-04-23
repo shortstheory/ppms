@@ -1,3 +1,4 @@
+var crypto = require('crypto');
 var query = require('./query.js')
 var sqlquery = require('./sqlquery.js')
 var password = require('./password.js')
@@ -247,24 +248,28 @@ app.get('/billing', function(req, res) {
 
 var loginCallback = function(rows, res) {
     console.log(rows);
-    if (typeof rows == 'undefined' || rows.length == 0) {
-      fs.readFile(path.join(__dirname+'/PPMS_GUI/login.html'), 'utf-8', function(err, html) {
-          jsdom.env(html,null, function(err, window) {
-              var $ = require('jquery')(window);
-              $("#wrongPassword").html('Wrong Password! Try again.');
-              res.send('<html>'+$("html").html()+'</html>');
-          });
-      });
-    }
-    else {
+    if (typeof rows == 'undefined' || !password.checkPassword(pass, rows[0]["SALT"], rows[0]["PASSWORD"])) {
+        fs.readFile(path.join(__dirname+'/PPMS_GUI/login.html'), 'utf-8', function(err, html) {
+            jsdom.env(html,null, function(err, window) {
+                var $ = require('jquery')(window);
+                $("#wrongPassword").html('Wrong Password! Try again.');
+                res.send('<html>'+$("html").html()+'</html>');
+            });
+        });
+    } else {
         return res.redirect('/index.html');
     }
+//    password.checkPassword(pass, rows["SALT"], rows["PASSWORD"]);
 };
 
+var name;
+var pass;
+
 app.post('/home', function(req, res){
-    var name = req.body.uname;
-    var pass = req.body.passw;
-    sqlquery.runQuery(myconnection, 'SELECT * FROM DOCTOR WHERE NAME="' + name + '" AND PASSWORD="' + pass + '"', loginCallback, res);
+    name = req.body.uname;
+    pass = req.body.passw;
+
+    sqlquery.runQuery(myconnection, 'SELECT PASSWORD, SALT FROM DOCTOR WHERE NAME="' + name + '"', loginCallback, res);
 });
 
 app.get('/patientManagement', function(req, res) {
@@ -351,3 +356,4 @@ var html = fs.readFileSync(path.join(__dirname+'/PPMS_GUI/vaccine_result.html'),
 console.log('Server running at http://127.0.0.1:8081/');
 
 //password.createUser(myconnection, 'asthana', 'iamlord', 7896543210);
+//password.checkPassword('iamlord', '3302fdad74475bdb', '6f0c1fecc3d48d4a4ac7e5bfaafc1e937b0decc419eef450f64baa66e1311fbcc99a8ba0299e554fc9dbaf2b14f5b6f56dbcc18a6612a23cbc1f70f192e998e5');

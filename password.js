@@ -6,6 +6,20 @@ var password = module.exports = {
     createUser: function (connection, username, plainTextPassword, mobileNo) {
         passwordData = saltHashPassword(plainTextPassword);
         sqlquery.runCommitQuery(connection, "INSERT INTO DOCTOR(NAME, PASSWORD, MOBILE, SALT) VALUES('" + username + "', '" + passwordData.passwordHash + "', '" + mobileNo + "', '" + passwordData.salt + "')", function(rows, res){}, null);
+    },
+    checkPassword: function(plainTextPassword, salt, passwordHash) {
+        // console.log(plainTextPassword + 'salt' + salt + 'hash' + passwordHash);
+        sha512(plainTextPassword, salt);
+        var hash = sha512(plainTextPassword, salt).passwordHash;
+        console.log(hash);
+        console.log(passwordHash);
+        if (hash == passwordHash) {
+            console.log('Password Match!');
+            return true;
+        } else {
+            console.log('Password failed');
+            return false;
+        }
     }
 };
 
@@ -14,9 +28,11 @@ var generateSalt = function(length){
 };
 
 var sha512 = function(password, salt) {
-    var hash = crypto.createHmac('sha512', salt); /** Hashing algorithm sha512 */
+    // console.log('password' + password + ' salt' + salt);
+    var hash = crypto.createHmac('sha512', salt.toString()); /** Hashing algorithm sha512 */
     hash.update(password);
     var value = hash.digest('hex');
+//    console.log(value);
     return {
         salt: salt,
         passwordHash: value
