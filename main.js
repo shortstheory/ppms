@@ -272,6 +272,10 @@ app.post('/home', function(req, res){
     sqlquery.runQuery(myconnection, 'SELECT PASSWORD, SALT FROM DOCTOR WHERE NAME="' + name + '"', loginCallback, res);
 });
 
+app.post('/signupsuccess', function(req, res) {
+
+});
+
 app.get('/patientManagement', function(req, res) {
     openPatientId = req.query.patientId;
     sqlquery.runQuery(myconnection, 'SELECT ID, NAME, MOBILE, DOB FROM PATIENT WHERE ID=' + openPatientId + ' UNION SELECT * FROM VACCINE', patientManagementCallback,res);
