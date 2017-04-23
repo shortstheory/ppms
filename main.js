@@ -207,13 +207,13 @@ var insertCallback = function(rows, res){
 
 app.use(express.static(__dirname + '/PPMS_GUI'));
 
-app.get('/index', function(req, res){
+app.post('/index', function(req, res){
     //console.log('Fetching today\'s patients');
     //sqlquery.runQuery(myconnection,'SELECT P.NAME, P.MOBILE, P.ADDRESS FROM PATIENT P, P_VISITS_D PD WHERE P.ID = PD.PID AND PD.VISIT_DATE=DATE(SYSDATE())' , resultCallback, res);
     //console.log(req.query);
     // if (typeof req.query.type !== 'undefined') {
     //     console.log('execrCQ');
-         sqlquery.runCommitQuery(myconnection, 'UPDATE PATIENT SET NAME="' + req.query.patientName + '", DOB="' + req.query.dateOfBirth + '", MOBILE=' + req.query.mobileNo + ', ADDRESS="' + req.query.address + '" WHERE ID=' + openPatientId, function(){}, res);
+         sqlquery.runCommitQuery(myconnection, 'UPDATE PATIENT SET NAME="' + req.body.patientName + '", DOB="' + req.body.dateOfBirth + '", MOBILE=' + req.body.mobileNo + ', ADDRESS="' + req.body.address + '" WHERE ID=' + openPatientId, function(){}, res);
     // }
 });
 
@@ -234,14 +234,40 @@ var billingCallback = function(rows, res) {
     });
 }
 
-app.get('/billing', function(req, res) { //this is a pretty messy section
-    var vaccine = req.query.vaccineName;
+app.post('/saveBillAmount', function(req, res) {
+    var total = req.body.bill;
+    var visit_id;
+    sqlquery.runQuery(myconnection, 'SELECT MAX(VISIT_ID) AS ID FROM P_VISITS_D', function(rows, res){
+        console.log(rows);
+        visit_id = rows[0]['ID']; // Coming as undefined even if there is a row!
+    }, res);
+    sqlquery.runCommitQuery(myconnection, 'UPDATE TABLE P_VISITS_D SET BILL_AMOUNT=' + total + ' WHERE ID=' + openPatientId + ' AND VISIT_ID = ' + visit_id, function(rows, res){}, res);
+});
+
+app.post('/downloadBill', function(req, res) {
+    console.log('Downloading bill ...');
+    var c1 = parseInt(req.body.prev)==NaN?0:parseInt(req.body.prev);
+    var c2 = parseInt(req.body.consultation)==NaN?0:parseInt(req.body.consultation);
+    var c3 = parseInt(req.body.vaccine)==NaN?0:parseInt(req.body.vaccine);
+    var c4 = parseInt(req.body.operation)==NaN?0:parseInt(req.body.operation);
+    var total = c1 + c2 + c3 + c4;
+    console.log(c1,c2, c3, c4);
+    console.log('total: ' + total);
+
+    var md = '' // write markdown code for bill
+
+    res.sendFile(path.join(__dirname+'/PPMS_GUI/billing.html'));
+});
+
+app.post('/billing', function(req, res) { //this is a pretty messy section
+    var vaccine = req.body.vaccineName;
     if (vaccine !== 'None') {
-        sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_VISITS_D (PID, DID, VISIT_DATE, DIAGNOSIS, TREATMENT) VALUES (' + openPatientId + ', ' + openDoctorId + ' , DATE(SYSDATE()), "' + req.query.diagnosis + '", "' + req.query.treatment + '")', function(rows, res){console.log(rows);}, res);
+        sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_VISITS_D (PID, DID, VISIT_DATE, DIAGNOSIS, TREATMENT) VALUES (' + openPatientId + ', ' + openDoctorId + ' , DATE(SYSDATE()), "' + req.body.diagnosis + '", "' + req.body.treatment + '")', function(rows, res){console.log(rows);}, res);
         sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_TAKES_V (PID, VID, VISIT_ID) VALUES (' + openPatientId + ', (SELECT ID FROM VACCINE WHERE NAME="' + vaccine + '"), (SELECT MAX(VISIT_ID) FROM P_VISITS_D))', function(rows, res){}, res);
+        sqlquery.runCommitQuery(myconnection, 'UPDATE VACCINE SET STOCK = STOCK - 1 WHERE NAME=' + vaccine, function(rows, res){}, res);
         sqlquery.runQuery(myconnection, 'SELECT PRICE FROM VACCINE WHERE NAME="' + vaccine + '"', billingCallback, res);
-    } else {// if (req.query.length == 4) {
-        sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_VISITS_D (PID, DID, VISIT_DATE, DIAGNOSIS, TREATMENT) VALUES (' + openPatientId + ', ' + openDoctorId + ' , DATE(SYSDATE()), "' + req.query.diagnosis + '", "' + req.query.treatment + '")', function(rows, res){console.log(rows)}, res);
+    } else {// if (req.body.length == 4) {
+        sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_VISITS_D (PID, DID, VISIT_DATE, DIAGNOSIS, TREATMENT) VALUES (' + openPatientId + ', ' + openDoctorId + ' , DATE(SYSDATE()), "' + req.body.diagnosis + '", "' + req.body.treatment + '")', function(rows, res){console.log(rows)}, res);
         res.sendFile(path.join(__dirname+'/PPMS_GUI/billing.html'));
     }
 });
@@ -257,6 +283,7 @@ var loginCallback = function(rows, res) {
             });
         });
     } else {
+        openDoctorId = rows[0]["ID"];
         return res.redirect('/index.html');
     }
 //    password.checkPassword(pass, rows["SALT"], rows["PASSWORD"]);
@@ -269,7 +296,7 @@ app.post('/home', function(req, res){
     name = req.body.uname;
     pass = req.body.passw;
 
-    sqlquery.runQuery(myconnection, 'SELECT PASSWORD, SALT FROM DOCTOR WHERE NAME="' + name + '"', loginCallback, res);
+    sqlquery.runQuery(myconnection, 'SELECT PASSWORD, SALT, ID FROM DOCTOR WHERE NAME="' + name + '"', loginCallback, res);
 });
 
 app.post('/signupsuccess', function(req, res) {
@@ -316,12 +343,13 @@ app.get('/patientResult', function(req, res) {
     }
 });
 
-app.get('/vaccine_addVaccine', function(req, res) {
-    sqlquery.runCommitQuery(myconnection,'INSERT INTO VACCINE (NAME, PRICE) VALUES("' + req.query.vaccineName +'", ' + req.query.vaccinePrice + ')' ,insertCallback, res);
+app.post('/vaccine_addVaccine', function(req, res) {
+    sqlquery.runCommitQuery(myconnection,'INSERT INTO VACCINE (NAME, PRICE) VALUES("' + req.body.vaccineName +'", ' + req.body.vaccinePrice + ')' ,insertCallback, res);
 });
 
-app.get('/patient_newPatientRecord', function(req, res) {
-    sqlquery.runCommitQuery(myconnection,'INSERT INTO PATIENT (NAME, DOB, MOBILE, ADDRESS) VALUES("' + req.query.patientName + '", "' + req.query.dateOfBirth + '", "' + req.query.mobileNo + '", "' + req.query.address + '")' , insertCallback, res);
+app.post('/patient_newPatientRecord', function(req, res) {
+    var date = req.body.year + '-' + req.body.month + '-' + req.body.day;
+    sqlquery.runCommitQuery(myconnection,'INSERT INTO PATIENT (NAME, DOB, SEX, MOBILE, ADDRESS) VALUES("' + req.body.patientName + '", "' + date + '", "' + req.body.sex + '", "' + req.body.mobileNo + '", "' + req.body.address + '")' , insertCallback, res);
 });
 
 app.get('/editPatient', function(req, res) {

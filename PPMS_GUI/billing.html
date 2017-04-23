@@ -23,16 +23,25 @@
     <link href="css/style-responsive.css" rel="stylesheet" />
 
     <script type="text/javascript">
-      function sum() {
-      var txtFirstNumberValue = document.getElementById('previousDues').value;
-      var txtSecondNumberValue = document.getElementById('consultation').value;
-      var txtThirdNumberValue = document.getElementById('vaccine_cost').value;
-      var txtFourthNumberValue = document.getElementById('op_charge').value;
-      var result = parseInt(txtFirstNumberValue) + parseInt(txtSecondNumberValue)+ parseInt(txtThirdNumberValue)+ parseInt(txtFourthNumberValue);
-      if (!isNaN(result)) {
-         document.getElementById('total_amount').value = result;
-      }
-}
+        function sum() {
+            var txtFirstNumberValue = document.getElementById('previousDues').value;
+            var txtSecondNumberValue = document.getElementById('consultation').value;
+            var txtThirdNumberValue = document.getElementById('vaccine_cost').value;
+            var txtFourthNumberValue = document.getElementById('op_charge').value;
+            var result = parseInt(txtFirstNumberValue) + parseInt(txtSecondNumberValue)+ parseInt(txtThirdNumberValue)+ parseInt(txtFourthNumberValue);
+            if (!isNaN(result)) {
+               document.getElementById('total_amount').value = result;
+            }
+            $.post('/saveBillAmount', {bill : result});
+        }
+        function downloadBill() {
+            $.post('/downloadBill', {
+                prev : document.getElementById('previousDues').value,
+                consultation : document.getElementById('consultation').value,
+                vaccine : document.getElementById('vaccine_cost').value,
+                operation : document.getElementById('op_charge').value
+            });
+        }
     </script>>
   </head>
 
@@ -156,8 +165,8 @@
                                       </div>
 
                                       <div class="col-lg-offset-2 col-lg-10">
-                                              <button class="btn btn-primary" type="submit" onclick="sum()">Calculate Total Bill</button>
-                                              <a href=""><button class="btn btn-default" type="button">Download Bill</button></a>
+                                              <button class="btn btn-primary" type="button" onclick="sum()">Calculate Total Bill</button>
+                                              <button class="btn btn-default" type="button" onclick="downloadBill()">Download Bill</button>
                                           </div>
 
                                       </div>
