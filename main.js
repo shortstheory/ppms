@@ -234,7 +234,7 @@ var billingCallback = function(rows, res) {
     });
 }
 
-app.get('/billing', function(req, res) {
+app.get('/billing', function(req, res) { //this is a pretty messy section
     var vaccine = req.query.vaccineName;
     if (vaccine !== 'None') {
         sqlquery.runCommitQuery(myconnection, 'INSERT INTO P_VISITS_D (PID, DID, VISIT_DATE, DIAGNOSIS, TREATMENT) VALUES (' + openPatientId + ', ' + openDoctorId + ' , DATE(SYSDATE()), "' + req.query.diagnosis + '", "' + req.query.treatment + '")', function(rows, res){console.log(rows);}, res);
