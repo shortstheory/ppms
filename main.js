@@ -273,7 +273,12 @@ app.post('/home', function(req, res){
 });
 
 app.post('/signupsuccess', function(req, res) {
-
+    var username = req.body.username;
+    var pwd = req.body.password;
+    var email = req.body.email;
+    var mobileno = req.body.mobileno;
+    password.createUser(myconnection, username, pwd, mobileno, email);
+    res.redirect('/login.html');
 });
 
 app.get('/patientManagement', function(req, res) {
