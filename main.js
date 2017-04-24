@@ -278,7 +278,7 @@ var loginCallback = function(rows, res) {
         fs.readFile(path.join(__dirname+'/PPMS_GUI/login.html'), 'utf-8', function(err, html) {
             jsdom.env(html,null, function(err, window) {
                 var $ = require('jquery')(window);
-                $("#wrongPassword").html('Wrong Password! Try again.');
+                $("#wrongPassword").html('<center>Wrong Password! Try again.</center>');
                 res.send('<html>'+$("html").html()+'</html>');
             });
         });
