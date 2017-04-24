@@ -19,7 +19,9 @@
     "crypto": "*",
     "tableify": "*",
     "node-pandoc": "*",
-    "express-session": "*"
+    "express-session": "*",
+    "json2csv": "*",
+    "jsonexport": "*"
   },
   "author": "arnav dhamija",
   "license": "ISC"

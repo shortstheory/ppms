@@ -271,10 +271,12 @@ app.get('/index', function(req, res) {
 
 app.post('/weekReport', function(req, res) {
     console.log("Downloading week report");
+    sqlquery.runQuery(myconnection, 'SELECT P.ID, P.NAME, V.VISIT_DATE, MOBILE, BILL_AMOUNT from PATIENT P, P_VISITS_D V WHERE P.ID=V.PID AND V.VISIT_DATE > DATE(DATE(SYSDATE()) - 7) AND P.DOC_ID='+openDoctorId, function(rows, res){html2pdf.makeWeekReportCSV(rows);}, res);
 });
 
 app.post('/vaccineReport', function(req, res) {
     console.log("Downloading vaacine report");
+    sqlquery.runQuery(myconnection, 'SELECT * FROM VACCINE', function(rows, res){html2pdf.makeVaccineCSV(rows);}, res);
 });
 
 app.post('/index', function(req, res){
@@ -315,10 +317,6 @@ app.post('/saveBillAmount', function(req, res) {
         sqlquery.runCommitQuery(myconnection, 'UPDATE P_VISITS_D SET BILL_AMOUNT=' + total + ' WHERE PID=' + openPatientId + ' AND VISIT_ID = ' + visit_id, function(rows, res){}, res);
     }, res);
 });
-
-var downloadBillCallback = function(rows, res) {
-    html2pdf.makeBillPdf(rows[0].DNAME, rows[0].PNAME, rows[0].VISIT_DATE, rows[0].DIAGNOSIS, rows[0].TREATMENT);
-};
 
 app.post('/downloadBill', function(req, res) {
     console.log('Downloading bill ...');
