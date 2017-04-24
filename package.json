@@ -18,7 +18,8 @@
     "node-json2html": "*",
     "crypto": "*",
     "tableify": "*",
-    "node-pandoc": "*"
+    "node-pandoc": "*",
+    "express-session": "*"
   },
   "author": "arnav dhamija",
   "license": "ISC"

@@ -1,6 +1,7 @@
 var query = require('./query.js');
 var sqlquery = require('./sqlquery.js');
 var password = require('./password.js');
+var html2pdf = require('./html2pdf');
 var crypto = require('crypto');
 var http = require('http');
 var mysql = require('mysql');
@@ -13,6 +14,7 @@ var jsdom = require('jsdom');
 var pandoc = require('node-pandoc');
 var bodyParser = require('body-parser')
 var session = require('express-session')
+var pandoc = require('node-pandoc');
 
 app = express();
 app.use(session({
@@ -259,16 +261,19 @@ var billingCallback = function(rows, res) {
         });
     });
 }
-
+var visit_id;
 app.post('/saveBillAmount', function(req, res) {
     var total = req.body.bill;
-    var visit_id;
     sqlquery.runQuery(myconnection, 'SELECT MAX(VISIT_ID) AS ID FROM P_VISITS_D', function(rows, res){
         console.log(rows[0]['ID']);
         visit_id = rows[0]['ID']; // Coming as undefined even if there is a row!
         sqlquery.runCommitQuery(myconnection, 'UPDATE P_VISITS_D SET BILL_AMOUNT=' + total + ' WHERE PID=' + openPatientId + ' AND VISIT_ID = ' + visit_id, function(rows, res){}, res);
     }, res);
 });
+
+var downloadBillCallback = function(rows, res) {
+    html2pdf.makePdf(rows[0].DNAME, rows[0].PNAME, rows[0].VISIT_DATE, rows[0].DIAGNOSIS, rows[0].TREATMENT);
+};
 
 app.post('/downloadBill', function(req, res) {
     console.log('Downloading bill ...');
@@ -279,8 +284,7 @@ app.post('/downloadBill', function(req, res) {
     var total = c1 + c2 + c3 + c4;
     console.log(c1,c2, c3, c4);
     console.log('total: ' + total);
-
-    var md = '' // write markdown code for bill
+    sqlquery.runQuery(myconnection, 'SELECT VISIT_DATE, DOCTOR.MOBILE, DOCTOR.EMAIL, PATIENT.NAME AS PNAME, DOCTOR.NAME AS DNAME, DIAGNOSIS, TREATMENT FROM DOCTOR, PATIENT, P_VISITS_D WHERE DOCTOR.ID=DID AND PATIENT.ID=PID AND VISIT_ID=(SELECT MAX(VISIT_ID) FROM P_VISITS_D)', downloadBillCallback, res);
 
     res.sendFile(path.join(__dirname+'/PPMS_GUI/billing.html'));
 });
