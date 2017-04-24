@@ -218,7 +218,7 @@ app.post('/index', function(req, res){
 });
 
 app.get('/patient_previousHistory', function(req, res) {
-    sqlquery.runQuery(myconnection, 'select PVD.VISIT_ID, PVD.DIAGNOSIS, PVD.TREATMENT, V.NAME AS VACCINE_NAME FROM P_VISITS_D PVD, P_TAKES_V PTV, VACCINE V WHERE PVD.VISIT_ID=PTV.VISIT_ID AND PTV.VID=V.ID AND PVD.PID=' + openPatientId + ' UNION SELECT VISIT_ID, DIAGNOSIS, TREATMENT, "None" AS VACCINE_NAME FROM P_VISITS_D WHERE PID=' + openPatientId, historyCallback, res);
+    sqlquery.runQuery(myconnection, 'SELECT PVD.VISIT_ID, PVD.DIAGNOSIS, PVD.TREATMENT, V.NAME AS VACCINE_NAME FROM P_VISITS_D PVD, P_TAKES_V PTV, VACCINE V WHERE PVD.VISIT_ID=PTV.VISIT_ID AND PTV.VID=V.ID AND PVD.PID=' + openPatientId + ' UNION SELECT VISIT_ID, DIAGNOSIS, TREATMENT, "None" AS VACCINE_NAME FROM P_VISITS_D WHERE PID=' + openPatientId, historyCallback, res);
 });
 
 var billingCallback = function(rows, res) {
@@ -328,12 +328,12 @@ app.get('/patientResult', function(req, res) {
       q = req.query;
       var type = req.query.type;
       if (type == 'name') {
-          sqlquery.runQuery(myconnection, 'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE NAME LIKE "%' + req.query.pname + '%"', patientResultCallback, res);
+          sqlquery.runQuery(myconnection, 'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE NAME LIKE "%' + req.query.pname + '%" AND DOC_ID=' + openDoctorId, patientResultCallback, res);
       } else if (type == 'mobile') {
-          sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE MOBILE=' + req.query.mobileNo, patientResultCallback, res);
+          sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE MOBILE=' + req.query.mobileNo + ' AND DOC_ID=' + openDoctorId, patientResultCallback, res);
       } else if (type == 'date') {
           var date = req.query.year+'-'+req.query.month+'-'+req.query.day;
-          sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE="' + date + '"', patientResultCallback, res);
+          sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE="' + date + '" AND DOC_ID=' + openDoctorId, patientResultCallback, res);
       }
     }
     else if (typeof req.query.deletePatientId !== 'undefined')
@@ -341,12 +341,12 @@ app.get('/patientResult', function(req, res) {
       sqlquery.runCommitQuery(myconnection, 'DELETE FROM PATIENT WHERE ID=' + req.query.deletePatientId, function(rows, res){console.log(rows);}, res);
       var type = q.type;
       if (type == 'name') {
-          sqlquery.runQuery(myconnection, 'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE NAME LIKE "%' + q.pname + '%"', patientResultCallback, res);
+          sqlquery.runQuery(myconnection, 'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE NAME LIKE "%' + q.pname + '%" AND DOC_ID=' + openDoctorId, patientResultCallback, res);
       } else if (type == 'mobile') {
-          sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE MOBILE=' + q.mobileNo, patientResultCallback, res);
+          sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT WHERE MOBILE=' + q.mobileNo + ' AND DOC_ID=' + openDoctorId, patientResultCallback, res);
       } else if (type == 'date') {
           var date = q.year+'-'+q.month+'-'+q.day;
-          sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE="' + date + '"', patientResultCallback, res);
+          sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE="' + date + '" AND DOC_ID=' + openDoctorId, patientResultCallback, res);
       }
     }
 });
@@ -357,7 +357,7 @@ app.post('/vaccine_addVaccine', function(req, res) {
 
 app.post('/patient_newPatientRecord', function(req, res) {
     var date = req.body.year + '-' + req.body.month + '-' + req.body.day;
-    sqlquery.runCommitQuery(myconnection,'INSERT INTO PATIENT (NAME, DOB, SEX, MOBILE, ADDRESS) VALUES("' + req.body.patientName + '", "' + date + '", "' + req.body.sex + '", "' + req.body.mobileNo + '", "' + req.body.address + '")' , insertCallback, res);
+    sqlquery.runCommitQuery(myconnection,'INSERT INTO PATIENT (NAME, DOB, SEX, MOBILE, ADDRESS, DOC_ID) VALUES("' + req.body.patientName + '", "' + date + '", "' + req.body.sex + '", "' + req.body.mobileNo + '", "' + req.body.address + '", ' + openDoctorId + ')' , insertCallback, res);
 });
 
 app.get('/editPatient', function(req, res) {
