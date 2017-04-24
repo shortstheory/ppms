@@ -10,14 +10,14 @@
 
     <title>PPMS</title>
 
-    <!-- Bootstrap CSS -->    
+    <!-- Bootstrap CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <!-- bootstrap theme -->
     <link href="css/bootstrap-theme.css" rel="stylesheet">
     <!--external css-->
     <!-- font icon -->
     <link href="css/elegant-icons-style.css" rel="stylesheet" />
-    <link href="css/font-awesome.min.css" rel="stylesheet" />    
+    <link href="css/font-awesome.min.css" rel="stylesheet" />
     <!-- full calendar css-->
     <link href="assets/fullcalendar/fullcalendar/bootstrap-fullcalendar.css" rel="stylesheet" />
 	<link href="assets/fullcalendar/fullcalendar/fullcalendar.css" rel="stylesheet" />
@@ -31,16 +31,16 @@
 	<link href="css/widgets.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <link href="css/style-responsive.css" rel="stylesheet" />
-	<link href="css/xcharts.min.css" rel=" stylesheet">	
+	<link href="css/xcharts.min.css" rel=" stylesheet">
 	<link href="css/jquery-ui-1.10.4.min.css" rel="stylesheet">
-    
+
   </head>
 
   <body>
   <!-- container section start -->
   <section id="container" class="">
-     
-      
+
+
       <header class="header dark-bg">
             <div class="toggle-nav">
                 <div class="icon-reorder tooltips" data-original-title="Toggle Navigation" data-placement="bottom"><i class="icon_menu"></i></div>
@@ -49,51 +49,56 @@
             <!--logo start-->
             <a href="index.html" class="logo">Paediatric Patient<span class="lite"> | MS</span></a>
             <!--logo end-->
+            <div class="col-lg-offset-11 top-nav navigation-row">
+                <a href='/logout'><button class="btn btn-danger" style="margin-top:7px" type="submit">Logout</button></a>
+            </div>
 
-            
-      </header>      
+      </header>
       <!--header end-->
 
       <!--sidebar start-->
       <aside>
           <div id="sidebar"  class="nav-collapse ">
               <!-- sidebar menu start-->
-              <ul class="sidebar-menu">                
+              <ul class="sidebar-menu">
                   <li class="active">
                       <a class="" href="index.html">
                           <i class="icon_house_alt"></i>
                           <span>Home</span>
                       </a>
                   </li>
-				  <li class="sub-menu">
+          <li class="sub-menu">
                       <a href="javascript:;" class="">
                           <i class="icon_document_alt"></i>
                           <span>Patient</span>
                           <span class="menu-arrow arrow_carrot-right"></span>
                       </a>
                       <ul class="sub">
-                          <li><a class="" href="patient_searchPatient.html">Search Records</a></li>                          
+                          <li><a class="" href="patient_searchPatient.html">Search Records</a></li>
                           <li><a class="" href="patient_newPatientRecord.html">New Patient</a></li>
                       </ul>
-                  </li>       
-                  
-                  
+                  </li>
+
+
                   <li class="sub-menu">
                       <a href="javascript:;" class="">
                           <i class="icon_documents_alt"></i>
                           <span>Vaccine</span>
                           <span class="menu-arrow arrow_carrot-right"></span>
                       </a>
-                      <ul class="sub">                          
+                      <ul class="sub">
                           <li><a class="" href="vaccine_searchVaccine.html">Search Vaccines</a></li>
-                          
+
                           <li><a class="" href="vaccine_addVaccine.html">Add Vaccine</a></li>
-                          
+
                       </ul>
                   </li>
-                  
+
               </ul>
               <!-- sidebar menu end-->
+          </div>
+      </aside>
+      <!--sidebar end-->
           </div>
       </aside>
       <section id="main-content">
@@ -101,7 +106,7 @@
       <div class="row">
         <div class="col-lg-12">
           <h3 class="page-header"><i class="fa fa-files-o"></i>Today's Patients</h3>
-          
+
         </div>
       </div>
               <!-- Form validations -->
@@ -111,7 +116,7 @@
                           <header class="panel-heading">
                               Patients
                           </header>
-                          
+
                           <table class="table table-striped table-advance table-hover">
                            <tbody>
                               <tr>
@@ -123,10 +128,10 @@
                                  <td>10200</td>
                                  <td>Sahil</td>
                                  <td>27/01/1997</td>
-                                 
-                                 
+
+
                               </tr>
-                                    
+
                         </table>
                       </section>
                   </div>
@@ -134,7 +139,7 @@
               <!-- page end-->
           </section>
       </section>
-      
+
       <!--main content end-->
 
   <!-- container section start -->
@@ -163,7 +168,7 @@
     <!-- custom select -->
     <script src="js/jquery.customSelect.min.js" ></script>
 	<script src="assets/chart-master/Chart.js"></script>
-   
+
     <!--custome script for all page-->
     <script src="js/scripts.js"></script>
     <!-- custom script for this page-->
@@ -174,9 +179,9 @@
 	<script src="js/xcharts.min.js"></script>
 	<script src="js/jquery.autosize.min.js"></script>
 	<script src="js/jquery.placeholder.min.js"></script>
-	<script src="js/gdp-data.js"></script>	
+	<script src="js/gdp-data.js"></script>
 	<script src="js/morris.min.js"></script>
-	<script src="js/sparklines.js"></script>	
+	<script src="js/sparklines.js"></script>
 	<script src="js/charts.js"></script>
 	<script src="js/jquery.slimscroll.min.js"></script>
   <script>
@@ -184,7 +189,7 @@
       //knob
       $(function() {
         $(".knob").knob({
-          'draw' : function () { 
+          'draw' : function () {
             $(this.i).val(this.cv + '%')
           }
         })
@@ -206,7 +211,7 @@
       $(function(){
           $('select.styled').customSelect();
       });
-	  
+
 	  /* ---------- Map ---------- */
 	$(function(){
 	  $('#map').vectorMap({
