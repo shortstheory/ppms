@@ -30,7 +30,7 @@ CREATE TABLE `DOCTOR` (
   `SALT` varchar(20) DEFAULT NULL,
   `EMAIL` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +39,7 @@ CREATE TABLE `DOCTOR` (
 
 LOCK TABLES `DOCTOR` WRITE;
 /*!40000 ALTER TABLE `DOCTOR` DISABLE KEYS */;
-INSERT INTO `DOCTOR` VALUES (1,'Parth Chaturvedi','rig_atharva_sama_yajur','9000000127',NULL,NULL),(2,'Rajiv Chaurasiya','hansadwani1556','9890000127',NULL,NULL),(3,'Aditi Shetty','doctor_hoon_mai!','9890000997',NULL,NULL);
+INSERT INTO `DOCTOR` VALUES (1,'Parth Chaturvedi','rig_atharva_sama_yajur','9000000127',NULL,NULL),(2,'Rajiv Chaurasiya','hansadwani1556','9890000127',NULL,NULL),(3,'Aditi Shetty','doctor_hoon_mai!','9890000997',NULL,NULL),(4,'Kumar18','88644b99eecc8ce35b80684e16f6583f57113abc17e0b2a555b699333a3281082fdf480aef3549db0a6cbcaa39de36405c0dd503b26cef4b5dbed78e307b50b8','9849172400','1f9e379c1ebd71f0','kumar_sambhav@gmail.com');
 /*!40000 ALTER TABLE `DOCTOR` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -57,8 +57,11 @@ CREATE TABLE `PATIENT` (
   `MOBILE` char(10) DEFAULT NULL,
   `ADDRESS` varchar(50) DEFAULT NULL,
   `SEX` varchar(6) NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+  `DOC_ID` int(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `DOC_ID` (`DOC_ID`),
+  CONSTRAINT `PATIENT_ibfk_1` FOREIGN KEY (`DOC_ID`) REFERENCES `DOCTOR` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +70,7 @@ CREATE TABLE `PATIENT` (
 
 LOCK TABLES `PATIENT` WRITE;
 /*!40000 ALTER TABLE `PATIENT` DISABLE KEYS */;
-INSERT INTO `PATIENT` VALUES (1,'Kalpana Ahluwalia','2001-07-18','9998193761','Sainikpuri',''),(2,'Abhijeet Yadav','1999-09-26','9091193761','Banjara Hills',''),(3,'Shashank Yadav','2004-11-06','9091193905','Port Blair, Gachibowli',''),(5,'Johnson Paul','2009-12-29','8701193905','Vancouver','');
+INSERT INTO `PATIENT` VALUES (1,'Kalpana Ahluwalia','2001-07-18','9998193761','Sainikpuri','',1),(2,'Abhijeet Yadav','1999-09-26','9091193761','Banjara Hills','',1),(3,'Shashank Yadav','2004-11-06','9091193905','Port Blair, Gachibowli','',1),(5,'Johnson Paul','2009-12-29','8701193905','Vancouver','',1),(6,'Shivani Patel','2005-09-06','7881737901','BITS','Female',1),(7,'Ajay Singla','1998-09-24','7871290192','Hyd','Male',4);
 /*!40000 ALTER TABLE `PATIENT` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -98,7 +101,7 @@ CREATE TABLE `P_TAKES_V` (
 
 LOCK TABLES `P_TAKES_V` WRITE;
 /*!40000 ALTER TABLE `P_TAKES_V` DISABLE KEYS */;
-INSERT INTO `P_TAKES_V` VALUES (5,2,9),(1,3,2),(3,5,1);
+INSERT INTO `P_TAKES_V` VALUES (7,1,22),(5,2,9),(1,3,2),(3,5,1);
 /*!40000 ALTER TABLE `P_TAKES_V` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -122,7 +125,7 @@ CREATE TABLE `P_VISITS_D` (
   KEY `DID` (`DID`),
   CONSTRAINT `P_VISITS_D_ibfk_1` FOREIGN KEY (`PID`) REFERENCES `PATIENT` (`ID`),
   CONSTRAINT `P_VISITS_D_ibfk_2` FOREIGN KEY (`DID`) REFERENCES `DOCTOR` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -131,7 +134,7 @@ CREATE TABLE `P_VISITS_D` (
 
 LOCK TABLES `P_VISITS_D` WRITE;
 /*!40000 ALTER TABLE `P_VISITS_D` DISABLE KEYS */;
-INSERT INTO `P_VISITS_D` VALUES (1,3,1,'2017-02-17','Viral flu','Kuch nahi crocin le theek ho jaega',300),(2,1,1,'2017-03-10','Jaundice','Don\'t touch oil and fat!',300),(3,2,2,'2017-04-13','Cancer','Chemo, I guess',30000),(4,3,1,'2017-04-19','Viral','Crocin. Getting sick too freq',300),(5,1,1,'2017-04-21','Fine.','Vaccine only',NULL),(6,1,1,'2017-04-21','Not good.','No treatment possible.',NULL),(7,3,1,'2017-04-21','No problem.','Time for polio.',NULL),(8,2,1,'2017-04-21','-','-',NULL),(9,5,1,'2017-04-21','-','-',NULL);
+INSERT INTO `P_VISITS_D` VALUES (1,3,1,'2017-02-17','Viral flu','Kuch nahi crocin le theek ho jaega',300),(2,1,1,'2017-03-10','Jaundice','Don\'t touch oil and fat!',300),(3,2,2,'2017-04-13','Cancer','Chemo, I guess',30000),(4,3,1,'2017-04-19','Viral','Crocin. Getting sick too freq',300),(5,1,1,'2017-04-21','Fine.','Vaccine only',NULL),(6,1,1,'2017-04-21','Not good.','No treatment possible.',NULL),(7,3,1,'2017-04-21','No problem.','Time for polio.',NULL),(8,2,1,'2017-04-21','-','-',NULL),(9,5,1,'2017-04-21','-','-',NULL),(10,3,1,'2017-04-24','Sick','Medicine',NULL),(14,6,4,'2017-04-24','First visit.','Just for fun.',NULL),(15,6,1,'2017-04-24','Here again!','Lets take consultation now!',NULL),(16,6,1,'2017-04-24','adj','sjfs',NULL),(17,6,1,'2017-04-24','ASDA',';LKMF',NULL),(18,2,1,'2017-04-24','sdad','adafafas',NULL),(19,2,1,'2017-04-24','dlka','klnfda',NULL),(20,2,1,'2017-04-24',',MN','SMN',NULL),(21,1,1,'2017-04-24','DJFDJ','SDHDH',NULL),(22,7,4,'2017-04-24','First visit','Toffee',NULL);
 /*!40000 ALTER TABLE `P_VISITS_D` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -147,10 +150,11 @@ CREATE TABLE `VACCINE` (
   `NAME` varchar(25) NOT NULL,
   `PRICE` int(11) NOT NULL,
   `STOCK` int(11) DEFAULT '10',
-  PRIMARY KEY (`NAME`),
+  PRIMARY KEY (`ID`),
   UNIQUE KEY `ID` (`ID`),
-  UNIQUE KEY `ID_2` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+  UNIQUE KEY `ID_2` (`ID`),
+  UNIQUE KEY `NAME` (`NAME`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -159,7 +163,7 @@ CREATE TABLE `VACCINE` (
 
 LOCK TABLES `VACCINE` WRITE;
 /*!40000 ALTER TABLE `VACCINE` DISABLE KEYS */;
-INSERT INTO `VACCINE` VALUES (10,'Boostrix',300,NULL),(5,'DPT',400,7),(2,'MMR',300,2),(4,'Polio',40,12),(3,'Rotarix',1100,4),(1,'Varilrix',700,6);
+INSERT INTO `VACCINE` VALUES (1,'Varilrix',700,5),(2,'MMR',300,2),(3,'Rotarix',1100,4),(4,'Polio',40,12),(5,'DPT',400,7),(11,'Pentavax',400,10);
 /*!40000 ALTER TABLE `VACCINE` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -172,4 +176,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-04-22 18:54:16
+-- Dump completed on 2017-04-24 16:22:29
