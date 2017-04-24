@@ -10,7 +10,7 @@ var fs = require('fs')
 var path = require('path')
 var tableify = require('tableify');
 var jsdom = require('jsdom');
-
+var pandoc = require('node-pandoc');
 var bodyParser = require('body-parser')
 
 app = express();
