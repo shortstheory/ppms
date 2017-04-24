@@ -165,7 +165,6 @@ var patientEditCallback = function(rows, res) {
         jsdom.env(html,null, function(err, window) {
             var $ = require('jquery')(window);
             $("#patientName").attr("value", rows[0].NAME);
-            $("#dateOfBirth").attr("value", rows[0].DOB);
             $("#mobileNo").attr("value", "" + rows[0].MOBILE + "");
             $("#address").html(rows[0].ADDRESS);
             res.send('<html>'+$("html").html()+'</html>');
@@ -274,7 +273,9 @@ app.post('/index', function(req, res){
     //console.log(req.query);
     // if (typeof req.query.type !== 'undefined') {
     //     console.log('execrCQ');
-         sqlquery.runCommitQuery(myconnection, 'PATIENT SET NAME="' + req.body.patientName + '", DOB="' + req.body.dateOfBirth + '", MOBILE=' + req.body.mobileNo + ', ADDRESS="' + req.body.address + '" WHERE ID=' + openPatientId, function(){}, res);
+    var date = req.body.year + '-' + req.body.month + '-' + req.body.day;
+    sqlquery.runCommitQuery(myconnection, 'UPDATE PATIENT SET NAME="' + req.body.patientName + '", DOB="' + date + '", MOBILE="' + req.body.mobileNo + '", ADDRESS="' + req.body.address + '" WHERE ID=' + openPatientId, function(){}, res);
+    res.redirect('/patient_searchPatient.html');
     // }
 });
 
