@@ -274,7 +274,15 @@ app.post('/billing', function(req, res) { //this is a pretty messy section
 
 var loginCallback = function(rows, res) {
     console.log(rows);
-    if (typeof rows == 'undefined' || !password.checkPassword(pass, rows[0]["SALT"], rows[0]["PASSWORD"])) {
+    if (typeof rows == 'undefined' || rows.length == 0) {
+        fs.readFile(path.join(__dirname+'/PPMS_GUI/login.html'), 'utf-8', function(err, html) {
+            jsdom.env(html,null, function(err, window) {
+                var $ = require('jquery')(window);
+                $("#wrongPassword").html('Wrong Password! Try again.');
+                res.send('<html>'+$("html").html()+'</html>');
+            });
+        });
+    } else if (!password.checkPassword(pass, rows[0]["SALT"], rows[0]["PASSWORD"])) {
         fs.readFile(path.join(__dirname+'/PPMS_GUI/login.html'), 'utf-8', function(err, html) {
             jsdom.env(html,null, function(err, window) {
                 var $ = require('jquery')(window);
