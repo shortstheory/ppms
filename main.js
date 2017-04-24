@@ -1,7 +1,7 @@
+var query = require('./query.js');
+var sqlquery = require('./sqlquery.js');
+var password = require('./password.js');
 var crypto = require('crypto');
-var query = require('./query.js')
-var sqlquery = require('./sqlquery.js')
-var password = require('./password.js')
 var http = require('http');
 var mysql = require('mysql');
 var express = require('express')
@@ -10,14 +10,39 @@ var fs = require('fs')
 var path = require('path')
 var tableify = require('tableify');
 var jsdom = require('jsdom');
-
+var pandoc = require('node-pandoc');
 var bodyParser = require('body-parser')
+var session = require('express-session')
 
 app = express();
+app.use(session({
+    cookieName : 'session',
+    secret : 'test_encrypted_string'
+}));
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-  extended: true
+  extended : true
 }));
+var sess;
+app.get(['/', '/index', '/billing', '/patient_currentVisit', '/patient_searchPatient', '/patient_editPatient', '/patient_newPatientRecord', '/patient_previousHistory', '/patient_result', '/vaccine_addVaccine', '/vaccine_result', '/vaccine_searchVaccine'], function(req, res, next) {
+  if (sess == null || sess.uname == null) {
+    res.redirect('/login.html');
+  }
+  else {
+      next();
+  }
+});
+
+app.get('/logout', function(req, res) {
+    req.session.destroy(function(err) {
+    if(err) {
+        console.log(err);
+    } else {
+        sess = undefined;
+        res.redirect('/login.html');
+    }
+    });
+});
 
 var openPatientId;
 var openDoctorId = 1;
@@ -205,7 +230,43 @@ var insertCallback = function(rows, res){
     res.sendFile(path.join(__dirname+'/PPMS_GUI/index.html'))
 };
 
+var homeTableTransform = function(rows) {
+    var transform = {
+        tag : 'tr',
+        children : [{
+            'tag' : 'td',
+            'html' : '${ID}'
+          },{
+            'tag' : 'td',
+            'html' : '${NAME}'
+          },{
+            'tag' : 'td',
+            'html' : '${VISIT_DATE}'
+        }]
+    };
+    var html = json2html.transform(rows, transform);
+    var tableHeader = '<tr><th>Patient ID</th><th>Name</th><th>Visit date</th></tr>';
+    html = tableHeader + html;
+    return html;
+};
+
+var homeCallback = function(rows, res) {
+    var tableHtml = homeTableTransform(rows);
+    console.log(rows);
+    fs.readFile(path.join(__dirname+'/PPMS_GUI/index.html'), 'utf-8', function(err, html) {
+        jsdom.env(html,null, function(err, window) {
+            var $ = require('jquery')(window);
+            $("#patientsTable").html(tableHtml);
+            res.send('<html>'+$("html").html()+'</html>');
+        });
+    });
+};
+
 app.use(express.static(__dirname + '/PPMS_GUI'));
+
+app.get('/index', function(req, res) {
+    sqlquery.runQuery(myconnection, 'SELECT P.ID, P.NAME, V.VISIT_DATE from PATIENT P, P_VISITS_D V WHERE P.ID=V.PID AND V.VISIT_DATE > DATE(DATE(SYSDATE()) - 7) AND P.DOC_ID=' + openDoctorId, homeCallback, res);
+});
 
 app.post('/index', function(req, res){
     //console.log('Fetching today\'s patients');
@@ -213,9 +274,10 @@ app.post('/index', function(req, res){
     //console.log(req.query);
     // if (typeof req.query.type !== 'undefined') {
     //     console.log('execrCQ');
-         sqlquery.runCommitQuery(myconnection, 'UPDATE PATIENT SET NAME="' + req.body.patientName + '", DOB="' + req.body.dateOfBirth + '", MOBILE=' + req.body.mobileNo + ', ADDRESS="' + req.body.address + '" WHERE ID=' + openPatientId, function(){}, res);
+         sqlquery.runCommitQuery(myconnection, 'PATIENT SET NAME="' + req.body.patientName + '", DOB="' + req.body.dateOfBirth + '", MOBILE=' + req.body.mobileNo + ', ADDRESS="' + req.body.address + '" WHERE ID=' + openPatientId, function(){}, res);
     // }
 });
+
 
 app.get('/patient_previousHistory', function(req, res) {
     sqlquery.runQuery(myconnection, 'SELECT PVD.VISIT_ID, PVD.DIAGNOSIS, PVD.TREATMENT, V.NAME AS VACCINE_NAME FROM P_VISITS_D PVD, P_TAKES_V PTV, VACCINE V WHERE PVD.VISIT_ID=PTV.VISIT_ID AND PTV.VID=V.ID AND PVD.PID=' + openPatientId + ' UNION SELECT VISIT_ID, DIAGNOSIS, TREATMENT, "None" AS VACCINE_NAME FROM P_VISITS_D WHERE PID=' + openPatientId, historyCallback, res);
@@ -291,8 +353,9 @@ var loginCallback = function(rows, res) {
             });
         });
     } else {
+        sess.uname = name;
         openDoctorId = rows[0]["ID"];
-        return res.redirect('/index.html');
+        return res.redirect('/index');
     }
 //    password.checkPassword(pass, rows["SALT"], rows["PASSWORD"]);
 };
@@ -303,6 +366,8 @@ var pass;
 app.post('/home', function(req, res){
     name = req.body.uname;
     pass = req.body.passw;
+
+    sess = req.session;
 
     sqlquery.runQuery(myconnection, 'SELECT PASSWORD, SALT, ID FROM DOCTOR WHERE NAME="' + name + '"', loginCallback, res);
 });
@@ -374,9 +439,9 @@ app.get('/about',function(req,res){
     res.sendFile(path.join(__dirname+'/my.html'));
 });
 
-app.get('/', function(req, res) {
-    query.selectQuery(myconnection, 'mytable', resultCallback, res);
-});
+// app.get('/', function(req, res) {
+//     query.selectQuery(myconnection, 'mytable', resultCallback, res);
+// });
 
 var lastVaccineQuery;
 app.get('/vaccineResult', function(req, res) {
