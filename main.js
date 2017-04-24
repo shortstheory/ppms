@@ -226,7 +226,7 @@ var insertCallback = function(rows, res){
         return;
     }
     var alertScript = '<script type = text/javascript>alert("Done");</script>';
-    res.sendFile(path.join(__dirname+'/PPMS_GUI/index.html'))
+    res.redirect('/index');
 };
 
 var homeTableTransform = function(rows) {
@@ -418,7 +418,7 @@ app.get('/patientResult', function(req, res) {
 });
 
 app.post('/vaccine_addVaccine', function(req, res) {
-    sqlquery.runCommitQuery(myconnection,'INSERT INTO VACCINE (NAME, PRICE) VALUES("' + req.body.vaccineName +'", ' + req.body.vaccinePrice + ')' ,insertCallback, res);
+    sqlquery.runCommitQuery(myconnection,'INSERT INTO VACCINE (NAME, PRICE, STOCK) VALUES("' + req.body.vaccineName +'", ' + req.body.vaccinePrice + ',' + req.body.vaccineStock + ')', insertCallback, res);
 });
 
 app.post('/patient_newPatientRecord', function(req, res) {
