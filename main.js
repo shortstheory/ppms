@@ -232,7 +232,43 @@ var insertCallback = function(rows, res){
     res.sendFile(path.join(__dirname+'/PPMS_GUI/index.html'))
 };
 
+var homeTableTransform = function(rows) {
+    var transform = {
+        tag : 'tr',
+        children : [{
+            'tag' : 'td',
+            'html' : '${ID}'
+          },{
+            'tag' : 'td',
+            'html' : '${NAME}'
+          },{
+            'tag' : 'td',
+            'html' : '${VISIT_DATE}'
+        }]
+    };
+    var html = json2html.transform(rows, transform);
+    var tableHeader = '<tr><th>Patient ID</th><th>Name</th><th>Visit date</th></tr>';
+    html = tableHeader + html;
+    return html;
+};
+
+var homeCallback = function(rows, res) {
+    var tableHtml = homeTableTransform(rows);
+    console.log(rows);
+    fs.readFile(path.join(__dirname+'/PPMS_GUI/index.html'), 'utf-8', function(err, html) {
+        jsdom.env(html,null, function(err, window) {
+            var $ = require('jquery')(window);
+            $("#patientsTable").html(tableHtml);
+            res.send('<html>'+$("html").html()+'</html>');
+        });
+    });
+};
+
 app.use(express.static(__dirname + '/PPMS_GUI'));
+
+app.get('/index', function(req, res) {
+    sqlquery.runQuery(myconnection, 'SELECT P.ID, P.NAME, V.VISIT_DATE from PATIENT P, P_VISITS_D V WHERE P.ID=V.PID AND V.VISIT_DATE > DATE(DATE(SYSDATE()) - 7) AND P.DOC_ID=' + openDoctorId, homeCallback, res);
+});
 
 app.post('/index', function(req, res){
     //console.log('Fetching today\'s patients');
@@ -321,8 +357,9 @@ var loginCallback = function(rows, res) {
             });
         });
     } else {
+        sess.uname = name;
         openDoctorId = rows[0]["ID"];
-        return res.redirect('/index.html');
+        return res.redirect('/index');
     }
 //    password.checkPassword(pass, rows["SALT"], rows["PASSWORD"]);
 };
@@ -335,7 +372,6 @@ app.post('/home', function(req, res){
     pass = req.body.passw;
 
     sess = req.session;
-    sess.uname = name;
 
     sqlquery.runQuery(myconnection, 'SELECT PASSWORD, SALT, ID FROM DOCTOR WHERE NAME="' + name + '"', loginCallback, res);
 });
