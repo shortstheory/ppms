@@ -238,10 +238,10 @@ app.post('/saveBillAmount', function(req, res) {
     var total = req.body.bill;
     var visit_id;
     sqlquery.runQuery(myconnection, 'SELECT MAX(VISIT_ID) AS ID FROM P_VISITS_D', function(rows, res){
-        console.log(rows);
+        console.log(rows[0]['ID']);
         visit_id = rows[0]['ID']; // Coming as undefined even if there is a row!
+        sqlquery.runCommitQuery(myconnection, 'UPDATE P_VISITS_D SET BILL_AMOUNT=' + total + ' WHERE PID=' + openPatientId + ' AND VISIT_ID = ' + visit_id, function(rows, res){}, res);
     }, res);
-    sqlquery.runCommitQuery(myconnection, 'UPDATE TABLE P_VISITS_D SET BILL_AMOUNT=' + total + ' WHERE ID=' + openPatientId + ' AND VISIT_ID = ' + visit_id, function(rows, res){}, res);
 });
 
 app.post('/downloadBill', function(req, res) {
