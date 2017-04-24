@@ -24,13 +24,24 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended : true
 }));
 var sess;
-app.get(['/', '/index', '/billing', 'patient_currentVisit', 'patient_editPatient', 'patient_newPatientRecord', 'patient_previousHistory', 'patient_result', 'patient_searchPatient', 'vaccine_addVaccine', 'vaccine_result', 'vaccine_searchVaccine'], function(req, res) {
-  if (req.session.uname == null) {
+app.get(['/', '/index', '/billing', '/patient_currentVisit', '/patient_searchPatient', '/patient_editPatient', '/patient_newPatientRecord', '/patient_previousHistory', '/patient_result', '/vaccine_addVaccine', '/vaccine_result', '/vaccine_searchVaccine'], function(req, res, next) {
+  if (sess == null || sess.uname == null) {
     res.redirect('/login.html');
   }
   else {
-    res.redirect('/login.html');
+      next();
   }
+});
+
+app.get('/logout', function(req, res) {
+    req.session.destroy(function(err) {
+    if(err) {
+        console.log(err);
+    } else {
+        sess = undefined;
+        res.redirect('/login.html');
+    }
+    });
 });
 
 var openPatientId;
