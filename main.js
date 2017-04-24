@@ -308,7 +308,7 @@ app.post('/saveBillAmount', function(req, res) {
 });
 
 var downloadBillCallback = function(rows, res) {
-    html2pdf.makePdf(rows[0].DNAME, rows[0].PNAME, rows[0].VISIT_DATE, rows[0].DIAGNOSIS, rows[0].TREATMENT);
+    html2pdf.makeBillPdf(rows[0].DNAME, rows[0].PNAME, rows[0].VISIT_DATE, rows[0].DIAGNOSIS, rows[0].TREATMENT);
 };
 
 app.post('/downloadBill', function(req, res) {
@@ -320,7 +320,7 @@ app.post('/downloadBill', function(req, res) {
     var total = c1 + c2 + c3 + c4;
     console.log(c1,c2, c3, c4);
     console.log('total: ' + total);
-    sqlquery.runQuery(myconnection, 'SELECT VISIT_DATE, DOCTOR.MOBILE, DOCTOR.EMAIL, PATIENT.NAME AS PNAME, DOCTOR.NAME AS DNAME, DIAGNOSIS, TREATMENT FROM DOCTOR, PATIENT, P_VISITS_D WHERE DOCTOR.ID=DID AND PATIENT.ID=PID AND VISIT_ID=(SELECT MAX(VISIT_ID) FROM P_VISITS_D)', downloadBillCallback, res);
+    sqlquery.runQuery(myconnection, 'SELECT VISIT_DATE, DOCTOR.MOBILE, DOCTOR.EMAIL, PATIENT.NAME AS PNAME, DOCTOR.NAME AS DNAME, DIAGNOSIS, TREATMENT FROM DOCTOR, PATIENT, P_VISITS_D WHERE DOCTOR.ID=DID AND PATIENT.ID=PID AND VISIT_ID=(SELECT MAX(VISIT_ID) FROM P_VISITS_D)', function(rows, res) {html2pdf.makeBillPdf(rows[0].DNAME, rows[0].PNAME, rows[0].VISIT_DATE, rows[0].DIAGNOSIS, rows[0].TREATMENT, rows[0].EMAIL, c1, c2, c3, c4, total);}, res);
 
     res.sendFile(path.join(__dirname+'/PPMS_GUI/billing.html'));
 });
