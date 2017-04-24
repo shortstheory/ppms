@@ -1,7 +1,7 @@
+var query = require('./query.js');
+var sqlquery = require('./sqlquery.js');
+var password = require('./password.js');
 var crypto = require('crypto');
-var query = require('./query.js')
-var sqlquery = require('./sqlquery.js')
-var password = require('./password.js')
 var http = require('http');
 var mysql = require('mysql');
 var express = require('express')
@@ -10,7 +10,7 @@ var fs = require('fs')
 var path = require('path')
 var tableify = require('tableify');
 var jsdom = require('jsdom');
-
+var pandoc = require('node-pandoc');
 var bodyParser = require('body-parser')
 var session = require('express-session')
 
