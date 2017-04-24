@@ -12,12 +12,26 @@ var tableify = require('tableify');
 var jsdom = require('jsdom');
 
 var bodyParser = require('body-parser')
+var session = require('express-session')
 
 app = express();
+app.use(session({
+    cookieName : 'session',
+    secret : 'test_encrypted_string'
+}));
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-  extended: true
+  extended : true
 }));
+var sess;
+app.get(['/', '/index', '/billing', 'patient_currentVisit', 'patient_editPatient', 'patient_newPatientRecord', 'patient_previousHistory', 'patient_result', 'patient_searchPatient', 'vaccine_addVaccine', 'vaccine_result', 'vaccine_searchVaccine'], function(req, res) {
+  if (req.session.uname == null) {
+    res.redirect('/login.html');
+  }
+  else {
+    res.redirect('/login.html');
+  }
+});
 
 var openPatientId;
 var openDoctorId = 1;
@@ -213,9 +227,10 @@ app.post('/index', function(req, res){
     //console.log(req.query);
     // if (typeof req.query.type !== 'undefined') {
     //     console.log('execrCQ');
-         sqlquery.runCommitQuery(myconnection, 'UPDATE PATIENT SET NAME="' + req.body.patientName + '", DOB="' + req.body.dateOfBirth + '", MOBILE=' + req.body.mobileNo + ', ADDRESS="' + req.body.address + '" WHERE ID=' + openPatientId, function(){}, res);
+         sqlquery.runCommitQuery(myconnection, 'PATIENT SET NAME="' + req.body.patientName + '", DOB="' + req.body.dateOfBirth + '", MOBILE=' + req.body.mobileNo + ', ADDRESS="' + req.body.address + '" WHERE ID=' + openPatientId, function(){}, res);
     // }
 });
+
 
 app.get('/patient_previousHistory', function(req, res) {
     sqlquery.runQuery(myconnection, 'SELECT PVD.VISIT_ID, PVD.DIAGNOSIS, PVD.TREATMENT, V.NAME AS VACCINE_NAME FROM P_VISITS_D PVD, P_TAKES_V PTV, VACCINE V WHERE PVD.VISIT_ID=PTV.VISIT_ID AND PTV.VID=V.ID AND PVD.PID=' + openPatientId + ' UNION SELECT VISIT_ID, DIAGNOSIS, TREATMENT, "None" AS VACCINE_NAME FROM P_VISITS_D WHERE PID=' + openPatientId, historyCallback, res);
@@ -304,6 +319,9 @@ app.post('/home', function(req, res){
     name = req.body.uname;
     pass = req.body.passw;
 
+    sess = req.session;
+    sess.uname = name;
+
     sqlquery.runQuery(myconnection, 'SELECT PASSWORD, SALT, ID FROM DOCTOR WHERE NAME="' + name + '"', loginCallback, res);
 });
 
@@ -374,9 +392,9 @@ app.get('/about',function(req,res){
     res.sendFile(path.join(__dirname+'/my.html'));
 });
 
-app.get('/', function(req, res) {
-    query.selectQuery(myconnection, 'mytable', resultCallback, res);
-});
+// app.get('/', function(req, res) {
+//     query.selectQuery(myconnection, 'mytable', resultCallback, res);
+// });
 
 var lastVaccineQuery;
 app.get('/vaccineResult', function(req, res) {
