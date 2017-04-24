@@ -29,6 +29,8 @@
 
 
       <!-- container section start -->
+  
+<!-- container section start -->
   <section id="container" class="">
 
 
@@ -40,7 +42,9 @@
             <!--logo start-->
             <a href="index.html" class="logo">Paediatric Patient<span class="lite"> | MS</span></a>
             <!--logo end-->
-
+            <div class="col-lg-offset-11 top-nav navigation-row">
+                <button class="btn btn-danger" style="margin-top:7px" type="submit">Logout</button>
+            </div>
 
       </header>
       <!--header end-->
@@ -68,7 +72,7 @@
                       </ul>
                   </li>
 
-
+                  
                   <li class="sub-menu">
                       <a href="javascript:;" class="">
                           <i class="icon_documents_alt"></i>
@@ -117,12 +121,80 @@
                                               <input class="form-control" id="patientName" name="patientName" type="text" required />
                                           </div>
                                       </div>
-                                      <div class="form-group ">
-                                          <label for="dateOfBirth" class="control-label col-lg-2">Date of Birth <span class="required">*</span></label>
-                                          <div class="col-lg-10" id="dobDiv">
-                                              <input class="form-control " id="dateOfBirth" type="text" name="dateOfBirth" required />
-                                          </div>
+                                       <div class="form-group ">
+                                          <label for="dateOfBirth" class="control-label col-lg-2">Date of Birth(DD/MM/YY)</label>
+
+                                        <div class="col-lg-2">
+                                          <select name="day" class="form-control m-bot15">
+                                              <option>1</option>
+                                              <option>2</option>
+                                              <option>3</option>
+                                              <option>4</option>
+                                              <option>5</option>
+                                              <option>6</option>
+                                              <option>7</option>
+                                              <option>8</option>
+                                              <option>9</option>
+                                              <option>10</option>
+                                              <option>11</option>
+                                              <option>12</option>
+                                              <option>13</option>
+                                              <option>14</option>
+                                              <option>15</option>
+                                              <option>16</option>
+                                              <option>17</option>
+                                              <option>18</option>
+                                              <option>19</option>
+                                              <option>20</option>
+                                              <option>21</option>
+                                              <option>22</option>
+                                              <option>23</option>
+                                              <option>24</option>
+                                              <option>25</option>
+                                              <option>26</option>
+                                              <option>27</option>
+                                              <option>28</option>
+                                              <option>29</option>
+                                              <option>30</option>
+                                              <option>31</option>
+                                          </select>
                                       </div>
+
+                                      <div class="offset col-lg-2">
+                                          <select name="month" class="form-control m-bot15">
+                                              <option>1</option>
+                                              <option>2</option>
+                                              <option>3</option>
+                                              <option>4</option>
+                                              <option>5</option>
+                                              <option>6</option>
+                                              <option>7</option>
+                                              <option>8</option>
+                                              <option>9</option>
+                                              <option>10</option>
+                                              <option>11</option>
+                                              <option>12</option>
+
+                                          </select>
+                                      </div>
+
+                                      <div class="offset col-lg-2">
+                                          <select name="year" class="form-control m-bot15">
+                                              <option>2007</option>
+                                              <option>2008</option>
+                                              <option>2009</option>
+                                              <option>2010</option>
+                                              <option>2011</option>
+                                              <option>2012</option>
+                                              <option>2013</option>
+                                              <option>2014</option>
+                                              <option>2015</option>
+                                              <option>2016</option>
+                                              <option>2017</option>
+                                          </select>
+                                      </div>
+                                  </div>
+
                                       <div class="form-group">
                                             <label for="gender" class="control-label col-lg-2">Sex<span class="required">*</span></label>
                                             <div class="col-lg-10" id="genderDiv">
