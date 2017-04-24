@@ -167,7 +167,6 @@ var patientEditCallback = function(rows, res) {
         jsdom.env(html,null, function(err, window) {
             var $ = require('jquery')(window);
             $("#patientName").attr("value", rows[0].NAME);
-            $("#dateOfBirth").attr("value", rows[0].DOB);
             $("#mobileNo").attr("value", "" + rows[0].MOBILE + "");
             $("#address").html(rows[0].ADDRESS);
             res.send('<html>'+$("html").html()+'</html>');
@@ -229,7 +228,7 @@ var insertCallback = function(rows, res){
         return;
     }
     var alertScript = '<script type = text/javascript>alert("Done");</script>';
-    res.sendFile(path.join(__dirname+'/PPMS_GUI/index.html'))
+    res.redirect('/index');
 };
 
 var homeTableTransform = function(rows) {
@@ -270,13 +269,23 @@ app.get('/index', function(req, res) {
     sqlquery.runQuery(myconnection, 'SELECT P.ID, P.NAME, V.VISIT_DATE from PATIENT P, P_VISITS_D V WHERE P.ID=V.PID AND V.VISIT_DATE > DATE(DATE(SYSDATE()) - 7) AND P.DOC_ID=' + openDoctorId, homeCallback, res);
 });
 
+app.post('/weekReport', function(req, res) {
+    console.log("Downloading week report");
+});
+
+app.post('/vaccineReport', function(req, res) {
+    console.log("Downloading vaacine report");
+});
+
 app.post('/index', function(req, res){
     //console.log('Fetching today\'s patients');
     //sqlquery.runQuery(myconnection,'SELECT P.NAME, P.MOBILE, P.ADDRESS FROM PATIENT P, P_VISITS_D PD WHERE P.ID = PD.PID AND PD.VISIT_DATE=DATE(SYSDATE())' , resultCallback, res);
     //console.log(req.query);
     // if (typeof req.query.type !== 'undefined') {
     //     console.log('execrCQ');
-         sqlquery.runCommitQuery(myconnection, 'PATIENT SET NAME="' + req.body.patientName + '", DOB="' + req.body.dateOfBirth + '", MOBILE=' + req.body.mobileNo + ', ADDRESS="' + req.body.address + '" WHERE ID=' + openPatientId, function(){}, res);
+    var date = req.body.year + '-' + req.body.month + '-' + req.body.day;
+    sqlquery.runCommitQuery(myconnection, 'UPDATE PATIENT SET NAME="' + req.body.patientName + '", DOB="' + date + '", MOBILE="' + req.body.mobileNo + '", ADDRESS="' + req.body.address + '" WHERE ID=' + openPatientId, function(){}, res);
+    res.redirect('/patient_searchPatient.html');
     // }
 });
 
@@ -421,7 +430,7 @@ app.get('/patientResult', function(req, res) {
 });
 
 app.post('/vaccine_addVaccine', function(req, res) {
-    sqlquery.runCommitQuery(myconnection,'INSERT INTO VACCINE (NAME, PRICE) VALUES("' + req.body.vaccineName +'", ' + req.body.vaccinePrice + ')' ,insertCallback, res);
+    sqlquery.runCommitQuery(myconnection,'INSERT INTO VACCINE (NAME, PRICE, STOCK) VALUES("' + req.body.vaccineName +'", ' + req.body.vaccinePrice + ',' + req.body.vaccineStock + ')', insertCallback, res);
 });
 
 app.post('/patient_newPatientRecord', function(req, res) {
