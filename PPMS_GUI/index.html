@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <link rel="shortcut icon" href="img/favicon.png">
 
     <title>PPMS</title>
@@ -122,16 +122,10 @@
                                  <th> Name</th>
                                  <th> Date Of Visit</th>
                               </tr>
-                              <tr>
-                                 <td>10200</td>
-                                 <td>Sahil</td>
-                                 <td>27/01/1997</td>
-
-
-                              </tr>
-
                         </table>
                       </section>
+                      <button class="btn btn-primary" type="button" onclick="$.post('/weekReport')">Download weeks report</button>
+                      <button class="btn btn-primary" type="button" onclick="$.post('/vaccineReport')">Download vaccine stock report</button>
                   </div>
               </div>
               <!-- page end-->

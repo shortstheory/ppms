@@ -269,6 +269,14 @@ app.get('/index', function(req, res) {
     sqlquery.runQuery(myconnection, 'SELECT P.ID, P.NAME, V.VISIT_DATE from PATIENT P, P_VISITS_D V WHERE P.ID=V.PID AND V.VISIT_DATE > DATE(DATE(SYSDATE()) - 7) AND P.DOC_ID=' + openDoctorId, homeCallback, res);
 });
 
+app.post('/weekReport', function(req, res) {
+    console.log("Downloading week report");
+});
+
+app.post('/vaccineReport', function(req, res) {
+    console.log("Downloading vaacine report");
+});
+
 app.post('/index', function(req, res){
     //console.log('Fetching today\'s patients');
     //sqlquery.runQuery(myconnection,'SELECT P.NAME, P.MOBILE, P.ADDRESS FROM PATIENT P, P_VISITS_D PD WHERE P.ID = PD.PID AND PD.VISIT_DATE=DATE(SYSDATE())' , resultCallback, res);
