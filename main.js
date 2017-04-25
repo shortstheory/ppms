@@ -411,12 +411,12 @@ app.get('/patientResult', function(req, res) {
       q = req.query;
       var type = req.query.type;
       if (type == 'name') {
-          sqlquery.runQuery(myconnection, 'SELECT DISTINCT(P.ID), P.NAME, P.DOB, P.MOBILE, P.ADDRESS, PVD.DID FROM PATIENT P, P_VISITS_D PVD WHERE P.NAME LIKE "%' + req.query.pname + '%" AND PVD.PID=P.ID AND PVD.DID=' + openDoctorId, patientResultCallback, res);
+          sqlquery.runQuery(myconnection, 'SELECT DISTINCT(P.ID), P.NAME, P.DOB, P.MOBILE, P.ADDRESS FROM PATIENT P WHERE P.NAME LIKE "%' + req.query.pname + '%"', patientResultCallback, res);
       } else if (type == 'mobile') {
-          sqlquery.runQuery(myconnection,'SELECT DISTINCT(P.ID), P.NAME, P.DOB, P.MOBILE, P.ADDRESS FROM PATIENT P, P_VISITS_D PVD WHERE P.MOBILE=' + req.query.mobileNo + ' AND PVD.PID=P.ID AND PVD.DID=' + openDoctorId, patientResultCallback, res);
+          sqlquery.runQuery(myconnection,'SELECT DISTINCT(P.ID), P.NAME, P.DOB, P.MOBILE, P.ADDRESS FROM PATIENT P WHERE P.MOBILE=' + req.query.mobileNo, patientResultCallback, res);
       } else if (type == 'date') {
           var date = req.query.year+'-'+req.query.month+'-'+req.query.day;
-          sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE="' + date + '" AND V.DID=' + openDoctorId, patientResultCallback, res);
+          sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE="' + date + '"', patientResultCallback, res);
       }
     }
     else if (typeof req.query.deletePatientId !== 'undefined')
@@ -424,12 +424,12 @@ app.get('/patientResult', function(req, res) {
       sqlquery.runCommitQuery(myconnection, 'DELETE FROM PATIENT WHERE ID=' + req.query.deletePatientId, function(rows, res){console.log(rows);}, res);
       var type = q.type;
       if (type == 'name') {
-          sqlquery.runQuery(myconnection, 'SELECT DISTINCT(P.ID), P.NAME, P.DOB, P.MOBILE, P.ADDRESS, PVD.DID FROM PATIENT P, P_VISITS_D PVD WHERE P.NAME LIKE "%' + req.query.pname + '%" AND PVD.PID=P.ID AND PVD.DID=' + openDoctorId, patientResultCallback, res);
+          sqlquery.runQuery(myconnection, 'SELECT DISTINCT(P.ID), P.NAME, P.DOB, P.MOBILE, P.ADDRESS FROM PATIENT P WHERE P.NAME LIKE "%' + req.query.pname + '%"', patientResultCallback, res);
       } else if (type == 'mobile') {
-          sqlquery.runQuery(myconnection,'SELECT DISTINCT(P.ID), P.NAME, P.DOB, P.MOBILE, P.ADDRESS FROM PATIENT P, P_VISITS_D PVD WHERE P.MOBILE=' + req.query.mobileNo + ' AND PVD.PID=P.ID AND PVD.DID=' + openDoctorId, patientResultCallback, res);
+          sqlquery.runQuery(myconnection,'SELECT DISTINCT(P.ID), P.NAME, P.DOB, P.MOBILE, P.ADDRESS FROM PATIENT P WHERE P.MOBILE=' + req.query.mobileNo, patientResultCallback, res);
       } else if (type == 'date') {
           var date = req.query.year+'-'+req.query.month+'-'+req.query.day;
-          sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE="' + date + '" AND V.DID=' + openDoctorId, patientResultCallback, res);
+          sqlquery.runQuery(myconnection,'SELECT ID, NAME, DOB, MOBILE, ADDRESS FROM PATIENT P, P_VISITS_D V WHERE P.ID = V.PID AND V.VISIT_DATE="' + date + '"', patientResultCallback, res);
       }
     }
 });
