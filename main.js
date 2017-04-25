@@ -27,12 +27,12 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 }));
 var sess;
 app.get(['/', '/index', '/billing', '/patient_currentVisit', '/patient_searchPatient', '/patient_editPatient', '/patient_newPatientRecord', '/patient_previousHistory', '/patient_result', '/vaccine_addVaccine', '/vaccine_result', '/vaccine_searchVaccine'], function(req, res, next) {
-  if (sess == null || sess.uname == null) {
-    res.redirect('/login.html');
-  }
-  else {
-      next();
-  }
+    if (sess == null || sess.uname == null) {
+        res.redirect('/login.html');
+    }
+    else {
+        next();
+    }
 });
 
 app.get('/logout', function(req, res) {
@@ -274,9 +274,15 @@ app.post('/weekReport', function(req, res) {
     sqlquery.runQuery(myconnection, 'SELECT P.ID, P.NAME, V.VISIT_DATE, MOBILE, BILL_AMOUNT from PATIENT P, P_VISITS_D V WHERE P.ID=V.PID AND V.VISIT_DATE > DATE(DATE(SYSDATE()) - 7) AND V.DID='+openDoctorId, function(rows, res){html2pdf.makeWeekReportCSV(rows);}, res);
 });
 
+app.get('/download', function(req, res) {
+    console.log('reached dl');
+    res.download('./vaccines.csv'); // Set disposition and send it.
+    res.send('<html><body>downloading</body></html>')
+});
+
 app.post('/vaccineReport', function(req, res) {
-    console.log("Downloading vaacine report");
-    sqlquery.runQuery(myconnection, 'SELECT * FROM VACCINE', function(rows, res){html2pdf.makeVaccineCSV(rows);}, res);
+    console.log("Downloading vaccine report");
+    sqlquery.runQuery(myconnection, 'SELECT * FROM VACCINE', function(rows, res){html2pdf.makeVaccineCSV(rows); res.redirect('/download');}, res);
 });
 
 app.post('/index', function(req, res){
